@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Biblioteca de Doctrina y Jurisprudencia | Cloudinary + Firebase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Firebase SDK v9 compat -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-compat.js"></script>
     <style>
         :root {
             --bg-light: #f7fafc;
             --bg-panel: #ffffff;
-            --primary: #1a365d; 
+            --primary: #1a365d;
             --primary-light: #2b6cb0;
             --primary-hover: #2c5282;
             --text-main: #2d3748;
@@ -19,268 +18,131 @@
             --border: #e2e8f0;
             --danger: #e53e3e;
             --danger-hover: #c53030;
+            --danger-light: #fed7d7;
             --success: #38a169;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
         .creator-badge {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-            border: 1px solid var(--border);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            z-index: 1000;
-            text-align: right;
-            box-shadow: var(--shadow);
-            transition: opacity 0.5s ease;
+            position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+            border: 1px solid var(--border); padding: 12px 18px; border-radius: 8px; font-size: 0.8rem;
+            color: var(--text-muted); z-index: 1000; box-shadow: var(--shadow); transition: opacity 0.5s ease;
         }
         .creator-badge span { color: var(--primary-light); font-weight: 600; }
-
+        /* Toasts */
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; padding: 12px 24px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 500; z-index: 3000;
+            opacity: 0; transition: opacity 0.3s ease; pointer-events: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast-success { background-color: var(--success); color: white; }
+        .toast-danger { background-color: var(--danger); color: white; }
+        .toast.show { opacity: 1; }
         #landing-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            padding: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; text-align: center; padding: 20px;
             background: radial-gradient(circle at top, #ebf8ff 0%, var(--bg-light) 70%);
             animation: fadeIn 0.8s ease-in-out;
         }
         #landing-page h1 { font-size: 3.2rem; margin-bottom: 15px; font-weight: 600; color: var(--primary); letter-spacing: -1px; }
         #landing-page h2 { font-size: 1.4rem; color: var(--text-muted); margin-bottom: 40px; font-weight: 400; }
-        
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 26px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: var(--primary); color: white; border: none; padding: 12px 26px;
+            font-size: 0.95rem; font-weight: 500; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
         }
         .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
         .btn-danger { background: var(--danger); }
         .btn-danger:hover { background: var(--danger-hover); }
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
         .btn-secondary:hover { background: #edf2f7; }
-        .btn-small { padding: 6px 12px; font-size: 0.8rem; margin-right: 5px; font-weight: 400; }
+        .btn-small { padding: 6px 12px; font-size: 0.8rem; margin-right: 5px; }
         .btn-upload { background: #2c7a4d; margin-left: 12px; padding: 8px 16px; }
         .btn-upload:hover { background: #276749; }
-
-        #app-container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        aside {
-            width: 280px;
-            background: var(--bg-panel);
-            border-right: 1px solid var(--border);
-            padding: 24px 0;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.02);
-        }
+        .landing-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 20px; }
+        .user-info-landing { margin-top: 24px; font-size: 0.9rem; background: var(--bg-panel); padding: 8px 16px; border-radius: 40px; display: inline-flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+        #app-container { display: flex; height: 100vh; width: 100%; animation: fadeIn 0.5s ease-in-out; }
+        aside { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
         .sidebar-header { padding: 0 24px 10px; margin-bottom: 5px; }
         .sidebar-header h3 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
         .filter-group { display: flex; flex-direction: column; margin-bottom: 20px; }
-        .filter-item {
-            padding: 10px 24px;
-            color: var(--text-main);
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            font-size: 0.95rem;
-        }
-        .filter-item:hover, .filter-item.active {
-            background: #f7fafc;
-            color: var(--primary-light);
-            border-left-color: var(--primary-light);
-            font-weight: 500;
-        }
-
-        main {
-            flex: 1;
-            padding: 35px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-light);
-        }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .top-bar h2 { font-size: 1.6rem; color: var(--primary); font-weight: 600; }
-        .top-bar-actions { display: flex; gap: 12px; }
-        
-        .table-container {
-            background: var(--bg-panel);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .filter-item { padding: 10px 24px; color: var(--text-main); font-weight: 400; cursor: pointer; border-left: 4px solid transparent; font-size: 0.95rem; }
+        .filter-item:hover, .filter-item.active { background: #f7fafc; color: var(--primary-light); border-left-color: var(--primary-light); font-weight: 500; }
+        main { flex: 1; padding: 35px; overflow-y: auto; display: flex; flex-direction: column; background-color: var(--bg-light); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px; }
+        .top-bar h2 { font-size: 1.6rem; color: var(--primary); font-weight: 600; margin: 0; flex: 1; }
+        .top-bar-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .top-bar-right { display: flex; align-items: center; gap: 12px; }
+        .search-input { padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; width: 260px; outline: none; }
+        .search-input:focus { border-color: var(--primary-light); }
+        .table-container { background: var(--bg-panel); border-radius: 8px; border: 1px solid var(--border); box-shadow: var(--shadow); flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th, td {
-            padding: 16px 24px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; background: #fafbfa; }
-        td { font-size: 0.95rem; color: var(--text-main); }
-        tr:hover { background: #fdfdfd; }
-        .pdf-link {
-            background: #eef2ff;
-            color: var(--primary-light);
-            padding: 5px 12px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+        th, td { padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; background: #fafbfa; }
+        .pdf-link { background: #eef2ff; color: var(--primary-light); padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
         .pdf-link:hover { background: #e0e7ff; text-decoration: underline; }
         .badge-empty { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
-
-        .pagination {
-            padding: 16px 24px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 6px;
-            border-top: 1px solid var(--border);
-            background: #fafbfa;
-            margin-top: auto;
-        }
-        .page-btn {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
+        .pagination { padding: 16px 24px; display: flex; justify-content: flex-end; gap: 6px; border-top: 1px solid var(--border); background: #fafbfa; }
+        .page-btn { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; cursor: pointer; }
         .page-btn.active { background: var(--primary-light); border-color: var(--primary-light); color: white; }
-        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(26, 54, 93, 0.2);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-        .modal-content {
-            background: var(--bg-panel);
-            padding: 32px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 560px;
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-        }
-        .modal-content h3 { font-size: 1.3rem; color: var(--primary); font-weight: 600; }
+        .modal-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(26,54,93,0.2); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: var(--bg-panel); padding: 32px; border-radius: 10px; max-width: 560px; width: 100%; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
         .form-group { margin-top: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            background: #ffffff;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-        .upload-area {
-            background: #f9fafb;
-            border: 1px dashed #cbd5e0;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 5px;
-        }
-        .pdf-preview {
-            margin-top: 10px;
-            background: #f1f5f9;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: 6px; }
+        .upload-area { background: #f9fafb; border: 1px dashed #cbd5e0; border-radius: 8px; padding: 12px; margin-top: 5px; }
+        .pdf-preview { margin-top: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
         .alert-modal-content { max-width: 400px; text-align: center; }
-        .upload-status { font-size: 0.8rem; margin-top: 6px; color: var(--text-muted); }
-
+        .user-status { font-size: 0.8rem; background: #edf2f7; padding: 4px 12px; border-radius: 24px; color: var(--primary); }
+        .auth-modal { max-width: 360px; padding: 28px 24px; border-radius: 16px; }
+        .auth-modal h3 { font-size: 1.4rem; font-weight: 500; margin-bottom: 20px; text-align: center; color: var(--primary); }
+        .auth-modal input { background: #f9fafb; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; }
+        .auth-modal .btn { width: 100%; margin-top: 24px; border-radius: 40px; }
+        .confirm-delete-modal {
+            max-width: 380px;
+            border-top: 6px solid var(--danger);
+            text-align: center;
+        }
+        .confirm-delete-modal h3 { color: var(--danger); margin-bottom: 16px; }
+        .confirm-delete-modal p { margin-bottom: 24px; color: var(--text-muted); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .hidden { display: none !important; }
-
         @media (max-width: 768px) {
             #landing-page h1 { font-size: 2rem; }
+            .btn { padding: 8px 16px; font-size: 0.85rem; white-space: normal; }
+            .landing-actions { flex-direction: column; align-items: stretch; }
             #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0 5px; }
-            .filter-group { flex-direction: row; overflow-x: auto; white-space: nowrap; margin-bottom: 8px; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }
+            .filter-group { flex-direction: row; overflow-x: auto; white-space: nowrap; }
             .filter-item { border-left: none; border-bottom: 3px solid transparent; padding: 8px 16px; }
-            .filter-item.active { border-bottom-color: var(--primary-light); background: transparent; }
+            .filter-item.active { border-bottom-color: var(--primary-light); }
             main { padding: 15px; }
-            .top-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .top-bar-actions, .top-bar-right { justify-content: center; }
+            .search-input { width: 100%; }
             .table-container { overflow-x: auto; }
-            table { min-width: 800px; }
-            .modal-content { padding: 20px; width: 92%; }
+            table { min-width: 950px; }
+            .toast { bottom: 20px; right: 20px; left: 20px; text-align: center; justify-content: center; }
         }
     </style>
 </head>
 <body>
-
-    <div class="creator-badge" id="info-badge">
-        Diseño y Programación:<br>
-        <span>Rómulo Fioravante. Año 2026</span>
-    </div>
+    <div class="creator-badge" id="info-badge">Diseño y Programación:<br><span>Rómulo Fioravante. Año 2026</span></div>
+    <div id="successToast" class="toast toast-success">✓ <span id="toastSuccessMessage">Registro exitoso</span></div>
+    <div id="dangerToast" class="toast toast-danger">🗑️ <span id="toastDangerMessage">Registro eliminado</span></div>
 
     <div id="landing-page">
         <h1>Biblioteca de Doctrina y Jurisprudencia</h1>
         <h2>Defensoria Civil y Comercial Nº 6 Ministerio Público</h2>
-        <button class="btn" onclick="ingresarApp()">Ingresar al Sistema</button>
+        <div class="landing-actions">
+            <button class="btn" onclick="ingresarApp()">Ingresar al Sistema</button>
+            <div id="auth-landing-container"></div>
+        </div>
+        <div id="landing-user-info" class="user-info-landing" style="display: none;"></div>
     </div>
 
     <div id="app-container" class="hidden">
@@ -302,473 +164,253 @@
                 <div class="filter-item" onclick="filtrarMateria('Fiscal', event)">Fiscal</div>
             </div>
         </aside>
-        
         <main>
             <div class="top-bar">
-                <h2 id="titulo-seccion">Registros (Todos / Todas las Materias)</h2>
+                <h2 id="titulo-seccion">Todos los documentos</h2>
                 <div class="top-bar-actions">
+                    <input type="text" id="input-busqueda" class="search-input" placeholder="🔍 Buscar por título o proceso..." oninput="filtrarBusqueda(event)">
                     <button class="btn" onclick="abrirModal()">+ Nuevo Registro</button>
+                </div>
+                <div class="top-bar-right">
+                    <div id="auth-app-container" style="display: inline-flex; align-items: center; gap: 12px;"></div>
                     <button class="btn btn-danger" onclick="abrirModalAlerta()">Salir</button>
                 </div>
             </div>
             <div class="table-container">
                 <table>
-                    <thead>
-                        <tr><th>Tipo</th><th>Materia</th><th>Proceso</th><th>Título / Referencia</th><th>Documento PDF</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody id="tabla-cuerpo">
-                        <tr><td colspan="6" style="text-align:center; padding: 40px;">Cargando documentos desde Firebase...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Tipo</th><th>Materia</th><th>Proceso</th><th>Título</th><th>PDF</th><th>Modelo Word</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-cuerpo"><tr><td colspan="7">Cargando...</td></tr></tbody>
                 </table>
                 <div class="pagination" id="paginacion"></div>
             </div>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <h3 id="modal-titulo">Nuevo Registro</h3>
-            <form id="registro-form" onsubmit="guardarRegistro(event)">
-                <input type="hidden" id="reg-id">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="reg-tipo" required>
-                        <option value="Doctrina">Doctrina</option>
-                        <option value="Jurisprudencia">Jurisprudencia</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Materia</label>
-                    <select id="reg-materia" required>
-                        <option value="Civil">Civil</option><option value="Comercial">Comercial</option>
-                        <option value="Familia">Familia</option><option value="Violencia Familiar">Violencia Familiar</option>
-                        <option value="Laboral">Laboral</option><option value="Fiscal">Fiscal</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Proceso</label>
-                    <input type="text" id="reg-proceso" placeholder="Ej: Ordinario, Amparo, Sucesión..." required>
-                </div>
-                <div class="form-group">
-                    <label>Título / Descripción</label>
-                    <textarea id="reg-titulo" rows="2" required></textarea>
-                </div>
-                
-                <!-- SECCIÓN CLOUDINARY resource_type: "image" (truco) -->
-                <div class="form-group">
-                    <label>📄 Documento PDF (subir a Cloudinary)</label>
-                    <div class="upload-area">
-                        <input type="file" id="pdf-file-input" accept="application/pdf" style="margin-bottom: 8px;">
-                        <button type="button" class="btn btn-small btn-upload" id="upload-pdf-btn">⬆️ Subir a Cloudinary</button>
-                        <div id="upload-status" class="upload-status"></div>
-                        <input type="hidden" id="reg-modelo-url" value="">
-                        <div id="pdf-preview-container" class="pdf-preview" style="display: none;">
-                            <span id="pdf-filename-display"></span>
-                            <a href="#" id="pdf-view-link" target="_blank" class="pdf-link" style="background:transparent; padding:0;">Ver PDF 📄</a>
-                        </div>
-                    </div>
-                </div>
+    <!-- Modales -->
+    <div class="modal-overlay" id="modal"><div class="modal-content"><h3 id="modal-titulo">Nuevo Registro</h3><form id="registro-form" onsubmit="guardarRegistro(event)"><input type="hidden" id="reg-id"><div class="form-group"><label>Tipo</label><select id="reg-tipo" required><option>Doctrina</option><option>Jurisprudencia</option></select></div><div class="form-group"><label>Materia</label><select id="reg-materia" required><option>Civil</option><option>Comercial</option><option>Familia</option><option>Violencia Familiar</option><option>Laboral</option><option>Fiscal</option></select></div><div class="form-group"><label>Proceso</label><input type="text" id="reg-proceso" required></div><div class="form-group"><label>Título</label><textarea id="reg-titulo" rows="2" required></textarea></div><div class="form-group"><label>📄 PDF (Cloudinary)</label><div class="upload-area"><input type="file" id="pdf-file-input" accept="application/pdf"><button type="button" class="btn btn-small btn-upload" id="upload-pdf-btn">Subir PDF</button><div id="upload-status"></div><input type="hidden" id="reg-modelo-url"><div id="pdf-preview-container" class="pdf-preview" style="display:none;"><span id="pdf-filename-display"></span><a href="#" id="pdf-view-link" target="_blank">Ver PDF</a></div></div></div><div class="form-group"><label>📝 Modelo Word</label><div class="upload-area"><input type="file" id="word-file-input" accept=".doc,.docx"><button type="button" class="btn btn-small btn-upload" id="upload-word-btn">Subir Word</button><div id="upload-word-status"></div><input type="hidden" id="reg-word-url"><div id="word-preview-container" class="pdf-preview" style="display:none;"><span id="word-filename-display"></span><a href="#" id="word-view-link" target="_blank">Ver Modelo</a></div></div></div><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button><button type="submit" class="btn">Guardar</button></div></form></div></div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
-                    <button type="submit" class="btn" id="btn-submit-form">Guardar Registro</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <div class="modal-overlay" id="modal-alerta"><div class="modal-content alert-modal-content"><h3>¿Cerrar Sesión?</h3><p>Está a punto de salir de la Biblioteca.</p><div class="modal-actions"><button class="btn btn-secondary" onclick="cerrarModalAlerta()">Cancelar</button><button class="btn btn-danger" onclick="confirmarSalir()">Salir</button></div></div></div>
 
-    <div class="modal-overlay" id="modal-alerta">
-        <div class="modal-content alert-modal-content">
-            <h3>¿Cerrar Sesión?</h3>
-            <p>Está a punto de salir de la Biblioteca de Doctrina y Jurisprudencia.</p>
+    <div class="modal-overlay" id="modal-auth"><div class="modal-content auth-modal"><h3>Iniciar sesión</h3><form onsubmit="event.preventDefault(); autenticarUsuario()"><div class="form-group"><label>Email</label><input type="email" id="auth-email" required></div><div class="form-group"><label>Contraseña</label><input type="password" id="auth-password" required></div><div id="auth-error" style="color:var(--danger); font-size:0.8rem; text-align:center;"></div><button type="submit" class="btn">Ingresar</button><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="cerrarModalAuth()">Cancelar</button></div></form></div></div>
+
+    <div class="modal-overlay" id="modal-confirm-delete">
+        <div class="modal-content confirm-delete-modal">
+            <h3>⚠️ Atención</h3>
+            <p>Este registro será eliminado <strong>definitivamente</strong>.<br>¿Desea continuar?</p>
             <div class="modal-actions" style="justify-content: center;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalAlerta()">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="confirmarSalir()">Confirmar Salir</button>
+                <button class="btn btn-secondary" id="btn-cancel-delete">No, regresa</button>
+                <button class="btn btn-danger" id="btn-confirm-delete">Sí, adelante</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ================= CONFIGURACIÓN FIREBASE =================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDtbeCpZ6ydLo5IhElIIQUHYXV6D1GVHgo",
-            authDomain: "biblioteca-doc-juris.firebaseapp.com",
-            projectId: "biblioteca-doc-juris",
-            storageBucket: "biblioteca-doc-juris.firebasestorage.app",
-            messagingSenderId: "734698545872",
-            appId: "1:734698545872:web:181ed4371af18cc522b4d5"
-        };
-        
+        const firebaseConfig = { apiKey: "AIzaSyDtbeCpZ6ydLo5IhElIIQUHYXV6D1GVHgo", authDomain: "biblioteca-doc-juris.firebaseapp.com", projectId: "biblioteca-doc-juris", storageBucket: "biblioteca-doc-juris.firebasestorage.app", messagingSenderId: "734698545872", appId: "1:734698545872:web:181ed4371af18cc522b4d5" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
         const bibliotecaRef = db.collection("biblioteca");
-        
-        // ================= CONFIGURACIÓN CLOUDINARY =================
-        const CLOUD_NAME = "dbdgpfn9g";
-        const API_KEY = "356974964929752";
-        const UPLOAD_PRESET = "legal_docs_preset";   // Debes crear este preset unsigned en Cloudinary
-        
-        // Estado global
-        let registros = [];
-        let filtroMateriaActual = 'Todas';
-        let filtroTipoActual = 'Todos';
-        let paginaActual = 1;
+        const CLOUD_NAME = "dbdgpfn9g", API_KEY = "356974964929752", UPLOAD_PRESET = "legal_docs_preset";
+        let registros = [], filtroMateriaActual = 'Todas', filtroTipoActual = 'Todos', filtroTextoActual = '', paginaActual = 1;
         const registrosPorPagina = 10;
-        
-        // Elementos DOM para Cloudinary
-        const fileInput = document.getElementById('pdf-file-input');
-        const uploadBtn = document.getElementById('upload-pdf-btn');
-        const uploadStatus = document.getElementById('upload-status');
-        const hiddenPdfUrl = document.getElementById('reg-modelo-url');
-        const previewContainer = document.getElementById('pdf-preview-container');
-        const pdfFilenameSpan = document.getElementById('pdf-filename-display');
-        const pdfViewLink = document.getElementById('pdf-view-link');
-        
-        // Helper badge
-        function iniciarTemporizadorBadge() {
-            const badge = document.getElementById('info-badge');
-            if (badge) {
-                badge.classList.remove('hidden');
-                badge.style.opacity = '1';
-                setTimeout(() => {
-                    badge.style.opacity = '0';
-                    setTimeout(() => badge.classList.add('hidden'), 500);
-                }, 4000);
-            }
+        let usuarioActual = null;
+        let pendingDeleteId = null;
+
+        // Elementos Cloudinary
+        const fileInput = document.getElementById('pdf-file-input'), uploadBtn = document.getElementById('upload-pdf-btn'), uploadStatus = document.getElementById('upload-status'), hiddenPdfUrl = document.getElementById('reg-modelo-url'), previewContainer = document.getElementById('pdf-preview-container'), pdfFilenameSpan = document.getElementById('pdf-filename-display'), pdfViewLink = document.getElementById('pdf-view-link');
+        const wordFileInput = document.getElementById('word-file-input'), wordUploadBtn = document.getElementById('upload-word-btn'), wordUploadStatus = document.getElementById('upload-word-status'), hiddenWordUrl = document.getElementById('reg-word-url'), wordPreviewContainer = document.getElementById('word-preview-container'), wordFilenameSpan = document.getElementById('word-filename-display'), wordViewLink = document.getElementById('word-view-link');
+
+        function showSuccessToast(msg) { const t = document.getElementById('successToast'); document.getElementById('toastSuccessMessage').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+        function showDangerToast(msg) { const t = document.getElementById('dangerToast'); document.getElementById('toastDangerMessage').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+        async function subirArchivoCloudinary(file, resourceType) {
+            if (!file) throw new Error("No file");
+            const fd = new FormData();
+            fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET); fd.append('api_key', API_KEY); fd.append('resource_type', resourceType);
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, { method: 'POST', body: fd });
+            if (!res.ok) throw new Error(await res.text());
+            return await res.json();
         }
-        
-        // ================= FUNCIONES CLOUDINARY =================
-        async function subirPDFCloudinary(file) {
-            if (!file) throw new Error("No se ha seleccionado ningún archivo");
-            if (file.type !== 'application/pdf') throw new Error("Solo se permiten archivos PDF");
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', UPLOAD_PRESET);
-            formData.append('api_key', API_KEY);
-            formData.append('resource_type', 'image');   // Truco para permitir PDFs
-            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-            const response = await fetch(url, { method: 'POST', body: formData });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'Error al subir archivo a Cloudinary');
-            }
-            const data = await response.json();
-            return { secure_url: data.secure_url, public_id: data.public_id, original_filename: data.original_filename };
-        }
-        
-        uploadBtn.addEventListener('click', async () => {
+        async function subirPDFCloudinary(file) { if (file.type !== 'application/pdf') throw new Error("Solo PDF"); return subirArchivoCloudinary(file, 'image'); }
+        async function subirWordCloudinary(file) { const ext = file.name.split('.').pop().toLowerCase(); if (ext !== 'doc' && ext !== 'docx') throw new Error("Solo Word"); return subirArchivoCloudinary(file, 'raw'); }
+
+        uploadBtn.onclick = async () => {
             const file = fileInput.files[0];
-            if (!file) {
-                uploadStatus.innerText = '❌ Selecciona un archivo PDF primero.';
-                uploadStatus.style.color = 'var(--danger)';
-                return;
-            }
-            uploadStatus.innerText = '⏫ Subiendo PDF a Cloudinary...';
-            uploadStatus.style.color = 'var(--text-muted)';
-            uploadBtn.disabled = true;
+            if (!file) { uploadStatus.innerText = '❌ Selecciona PDF'; return; }
+            uploadStatus.innerText = 'Subiendo...'; uploadBtn.disabled = true;
             try {
-                const resultado = await subirPDFCloudinary(file);
-                hiddenPdfUrl.value = resultado.secure_url;
-                const nombreMostrar = resultado.original_filename || 'documento.pdf';
-                pdfFilenameSpan.innerText = `📎 ${nombreMostrar.substring(0, 40)}`;
-                pdfViewLink.href = resultado.secure_url;
+                const r = await subirPDFCloudinary(file);
+                hiddenPdfUrl.value = r.secure_url;
+                pdfFilenameSpan.innerText = `📎 ${r.original_filename || 'documento.pdf'}`;
+                pdfViewLink.href = r.secure_url;
                 previewContainer.style.display = 'flex';
-                uploadStatus.innerText = '✅ PDF subido correctamente.';
-                uploadStatus.style.color = 'var(--success)';
-                fileInput.value = '';
-            } catch (error) {
-                console.error(error);
-                uploadStatus.innerText = `❌ Error: ${error.message}`;
-                uploadStatus.style.color = 'var(--danger)';
-                hiddenPdfUrl.value = '';
-            } finally {
-                uploadBtn.disabled = false;
-                setTimeout(() => {
-                    if (uploadStatus.innerText.includes('correctamente')) 
-                        setTimeout(() => uploadStatus.innerText = '', 2500);
-                }, 2500);
-            }
-        });
-        
-        function resetearPreviewPDF() {
-            hiddenPdfUrl.value = '';
-            previewContainer.style.display = 'none';
-            pdfFilenameSpan.innerText = '';
-            pdfViewLink.href = '#';
-            uploadStatus.innerText = '';
-            fileInput.value = '';
-        }
-        
-        function cargarPreviewDesdeURL(url) {
-            if (url && url.trim() !== "") {
-                hiddenPdfUrl.value = url;
-                pdfViewLink.href = url;
-                pdfFilenameSpan.innerText = `📄 PDF vinculado (click para ver)`;
-                previewContainer.style.display = 'flex';
-                uploadStatus.innerText = 'Documento PDF ya asociado.';
-            } else {
-                resetearPreviewPDF();
-            }
-        }
-        
-        // ================= FIRESTORE CRUD =================
-        async function cargarRegistrosDesdeFirestore() {
+                uploadStatus.innerText = '✅ Subido';
+            } catch(e) { uploadStatus.innerText = `❌ ${e.message}`; hiddenPdfUrl.value = ''; }
+            finally { uploadBtn.disabled = false; setTimeout(() => uploadStatus.innerText = '', 2500); }
+        };
+        wordUploadBtn.onclick = async () => {
+            const file = wordFileInput.files[0];
+            if (!file) { wordUploadStatus.innerText = '❌ Selecciona Word'; return; }
+            wordUploadStatus.innerText = 'Subiendo...'; wordUploadBtn.disabled = true;
             try {
-                const snapshot = await bibliotecaRef.orderBy('createdAt', 'desc').get();
-                const docs = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    docs.push({
-                        id: doc.id,
-                        tipo: data.tipo,
-                        materia: data.materia,
-                        proceso: data.proceso,
-                        titulo: data.titulo,
-                        modelo: data.modelo || ''
-                    });
-                });
-                registros = docs;
+                const r = await subirWordCloudinary(file);
+                hiddenWordUrl.value = r.secure_url;
+                wordFilenameSpan.innerText = `📎 ${r.original_filename || 'modelo.docx'}`;
+                wordViewLink.href = r.secure_url;
+                wordPreviewContainer.style.display = 'flex';
+                wordUploadStatus.innerText = '✅ Subido';
+            } catch(e) { wordUploadStatus.innerText = `❌ ${e.message}`; hiddenWordUrl.value = ''; }
+            finally { wordUploadBtn.disabled = false; setTimeout(() => wordUploadStatus.innerText = '', 2500); }
+        };
+        function resetPreviews() { hiddenPdfUrl.value = ''; previewContainer.style.display = 'none'; pdfFilenameSpan.innerText = ''; pdfViewLink.href = '#'; uploadStatus.innerText = ''; fileInput.value = ''; hiddenWordUrl.value = ''; wordPreviewContainer.style.display = 'none'; wordFilenameSpan.innerText = ''; wordViewLink.href = '#'; wordUploadStatus.innerText = ''; wordFileInput.value = ''; }
+
+        async function cargarRegistros() {
+            try {
+                const snap = await bibliotecaRef.orderBy('createdAt', 'desc').get();
+                registros = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 renderizarTabla();
-            } catch (error) {
-                console.error("Error cargando datos desde Firebase:", error);
-                document.getElementById('tabla-cuerpo').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: red;">⚠️ Error conectando con Firebase. Verifica permisos o conexión.</td></tr>';
-            }
+            } catch(e) { document.getElementById('tabla-cuerpo').innerHTML = '<tr><td colspan="7">Error Firebase</td></tr>'; }
         }
-        
-        async function agregarRegistroFirestore(registro) {
-            await bibliotecaRef.add({
-                tipo: registro.tipo,
-                materia: registro.materia,
-                proceso: registro.proceso,
-                titulo: registro.titulo,
-                modelo: registro.modelo || '',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-        
-        async function actualizarRegistroFirestore(id, registro) {
-            await bibliotecaRef.doc(id).update({
-                tipo: registro.tipo,
-                materia: registro.materia,
-                proceso: registro.proceso,
-                titulo: registro.titulo,
-                modelo: registro.modelo || ''
-            });
-        }
-        
-        async function eliminarRegistroFirestore(id) {
-            await bibliotecaRef.doc(id).delete();
-        }
-        
-        // ================= RENDERIZADO, FILTROS, PAGINACIÓN =================
+        async function agregarRegistro(r) { await bibliotecaRef.add({ ...r, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); }
+        async function actualizarRegistro(id, r) { await bibliotecaRef.doc(id).update(r); }
+        async function eliminarRegistroFirestore(id) { await bibliotecaRef.doc(id).delete(); }
+
         function renderizarTabla() {
             const tbody = document.getElementById('tabla-cuerpo');
             tbody.innerHTML = '';
-            
-            let datosFiltrados = registros.filter(r => {
-                const cumpleMateria = (filtroMateriaActual === 'Todas' || r.materia === filtroMateriaActual);
-                const cumpleTipo = (filtroTipoActual === 'Todos' || r.tipo === filtroTipoActual);
-                return cumpleMateria && cumpleTipo;
+            let filtrados = registros.filter(r => (filtroMateriaActual === 'Todas' || r.materia === filtroMateriaActual) && (filtroTipoActual === 'Todos' || r.tipo === filtroTipoActual) && (!filtroTextoActual || r.titulo?.toLowerCase().includes(filtroTextoActual) || r.proceso?.toLowerCase().includes(filtroTextoActual)));
+            const totalPag = Math.ceil(filtrados.length / registrosPorPagina);
+            const inicio = (paginaActual-1)*registrosPorPagina;
+            const datos = filtrados.slice(inicio, inicio+registrosPorPagina);
+            if(datos.length===0) tbody.innerHTML = '<tr><td colspan="7">No hay registros</td></tr>';
+            else datos.forEach(reg => {
+                const pdfHtml = reg.modelo ? `<a href="${reg.modelo}" target="_blank" class="pdf-link">📄 Ver PDF</a>` : '<span class="badge-empty">Sin documento</span>';
+                const wordHtml = reg.modeloWord ? `<a href="${reg.modeloWord}" target="_blank" class="pdf-link">📝 Ver Modelo</a>` : '<span class="badge-empty">Sin modelo</span>';
+                const acciones = usuarioActual ? `<button class="btn btn-small btn-secondary" onclick="editarRegistro('${reg.id}')">Editar</button><button class="btn btn-small btn-danger" onclick="mostrarModalEliminar('${reg.id}')">Eliminar</button>` : '<span class="badge-empty">🔒 Inicia sesión</span>';
+                tbody.innerHTML += `<tr><td><span style="background:${reg.tipo==='Doctrina'?'rgba(56,161,105,0.12)':'rgba(43,108,176,0.12)'}; padding:4px 10px; border-radius:4px;">${reg.tipo}</span></td><td>${reg.materia}</td><td><strong>${escapeHtml(reg.proceso)}</strong></td><td>${escapeHtml(reg.titulo)}</td><td>${pdfHtml}</td><td>${wordHtml}</td><td>${acciones}</td></tr>`;
             });
-            
-            const totalPaginas = Math.ceil(datosFiltrados.length / registrosPorPagina);
-            const inicio = (paginaActual - 1) * registrosPorPagina;
-            const datosPaginados = datosFiltrados.slice(inicio, inicio + registrosPorPagina);
-            
-            if (datosPaginados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px;">📭 No hay registros. Cree el primero usando "+ Nuevo Registro".</td></tr>';
-            } else {
-                datosPaginados.forEach(reg => {
-                    const pdfHtml = reg.modelo && reg.modelo.trim() !== "" 
-                        ? `<a href="${reg.modelo}" target="_blank" class="pdf-link">📄 Ver PDF</a>` 
-                        : `<span class="badge-empty">Sin documento</span>`;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><span style="background: ${reg.tipo === 'Doctrina' ? 'rgba(56,161,105,0.12)' : 'rgba(43,108,176,0.12)'}; color: ${reg.tipo === 'Doctrina' ? 'var(--success)' : 'var(--primary-light)'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${reg.tipo}</span></td>
-                        <td>${reg.materia}</td>
-                        <td><strong>${escapeHtml(reg.proceso)}</strong></td>
-                        <td style="max-width: 280px; white-space: normal;">${escapeHtml(reg.titulo)}</td>
-                        <td>${pdfHtml}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="editarRegistro('${reg.id}')">Editar</button>
-                            <button class="btn btn-small btn-danger" onclick="eliminarRegistro('${reg.id}')">Eliminar</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+            const pagDiv = document.getElementById('paginacion');
+            pagDiv.innerHTML = '';
+            if(totalPag>1){
+                const prev = document.createElement('button'); prev.innerText='«'; prev.className='page-btn'; prev.disabled= paginaActual===1; prev.onclick=()=>{paginaActual--; renderizarTabla();}; pagDiv.appendChild(prev);
+                for(let i=1;i<=totalPag;i++){ const b = document.createElement('button'); b.innerText=i; b.className=`page-btn ${paginaActual===i?'active':''}`; b.onclick=()=>{paginaActual=i; renderizarTabla();}; pagDiv.appendChild(b); }
+                const next = document.createElement('button'); next.innerText='»'; next.className='page-btn'; next.disabled= paginaActual===totalPag; next.onclick=()=>{paginaActual++; renderizarTabla();}; pagDiv.appendChild(next);
             }
-            renderizarPaginacion(totalPaginas);
         }
+        function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
         
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-        
-        function renderizarPaginacion(totalPaginas) {
-            const contenedor = document.getElementById('paginacion');
-            contenedor.innerHTML = '';
-            if (totalPaginas <= 1) return;
-            const prevBtn = document.createElement('button');
-            prevBtn.className = 'page-btn';
-            prevBtn.innerText = '«';
-            prevBtn.disabled = paginaActual === 1;
-            prevBtn.onclick = () => { paginaActual--; renderizarTabla(); };
-            contenedor.appendChild(prevBtn);
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${paginaActual === i ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => { paginaActual = i; renderizarTabla(); };
-                contenedor.appendChild(btn);
-            }
-            const nextBtn = document.createElement('button');
-            nextBtn.className = 'page-btn';
-            nextBtn.innerText = '»';
-            nextBtn.disabled = paginaActual === totalPaginas;
-            nextBtn.onclick = () => { paginaActual++; renderizarTabla(); };
-            contenedor.appendChild(nextBtn);
-        }
-        
+        // Nuevo título dinámico basado en filtros
         function actualizarTituloSeccion() {
-            document.getElementById('titulo-seccion').innerText = `Registros (${filtroTipoActual} / Materia: ${filtroMateriaActual})`;
+            let tipoTexto = '';
+            if (filtroTipoActual === 'Todos') tipoTexto = 'Todos los documentos';
+            else tipoTexto = filtroTipoActual; // "Doctrina" o "Jurisprudencia"
+            let materiaTexto = '';
+            if (filtroMateriaActual !== 'Todas') materiaTexto = ` · ${filtroMateriaActual}`;
+            const tituloFinal = tipoTexto + materiaTexto;
+            document.getElementById('titulo-seccion').innerText = tituloFinal;
         }
+
+        window.filtrarMateria = function(m, e){ filtroMateriaActual=m; paginaActual=1; document.querySelectorAll('#filtros-materia .filter-item').forEach(el=>el.classList.remove('active')); if(e) e.target.classList.add('active'); actualizarTituloSeccion(); renderizarTabla(); };
+        window.filtrarTipo = function(t, e){ filtroTipoActual=t; paginaActual=1; document.querySelectorAll('#filtros-tipo .filter-item').forEach(el=>el.classList.remove('active')); if(e) e.target.classList.add('active'); actualizarTituloSeccion(); renderizarTabla(); };
+        window.filtrarBusqueda = function(e){ filtroTextoActual = e.target.value.toLowerCase().trim(); paginaActual=1; renderizarTabla(); };
         
-        // ================= FILTROS GLOBALES =================
-        window.filtrarMateria = function(materia, event) {
-            filtroMateriaActual = materia;
-            paginaActual = 1;
-            document.querySelectorAll('#filtros-materia .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            actualizarTituloSeccion();
-            renderizarTabla();
-        };
-        
-        window.filtrarTipo = function(tipo, event) {
-            filtroTipoActual = tipo;
-            paginaActual = 1;
-            document.querySelectorAll('#filtros-tipo .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            actualizarTituloSeccion();
-            renderizarTabla();
-        };
-        
-        // ================= CRUD MODAL =================
-        window.abrirModal = function() {
-            resetearPreviewPDF();
-            document.getElementById('registro-form').reset();
-            document.getElementById('reg-id').value = '';
-            document.getElementById('modal-titulo').innerText = 'Nuevo Registro';
-            document.getElementById('modal').style.display = 'flex';
-        };
-        
-        window.cerrarModal = function() {
-            document.getElementById('modal').style.display = 'none';
-            resetearPreviewPDF();
-        };
-        
-        window.guardarRegistro = async function(e) {
+        window.abrirModal = function(){ resetPreviews(); document.getElementById('registro-form').reset(); document.getElementById('reg-id').value=''; document.getElementById('modal-titulo').innerText='Nuevo Registro'; document.getElementById('modal').style.display='flex'; };
+        window.cerrarModal = function(){ document.getElementById('modal').style.display='none'; resetPreviews(); };
+        window.guardarRegistro = async function(e){
             e.preventDefault();
             const id = document.getElementById('reg-id').value;
-            const tipo = document.getElementById('reg-tipo').value;
-            const materia = document.getElementById('reg-materia').value;
-            const proceso = document.getElementById('reg-proceso').value;
-            const titulo = document.getElementById('reg-titulo').value;
-            const modeloUrl = document.getElementById('reg-modelo-url').value; // campo corregido
-            
-            if (!titulo || !proceso) {
-                alert("Complete los campos obligatorios (Proceso y Título).");
-                return;
-            }
-            
-            const nuevoRegistro = { tipo, materia, proceso, titulo, modelo: modeloUrl };
-            const submitBtn = document.getElementById('btn-submit-form');
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Guardando...';
-            
-            try {
-                if (id) {
-                    await actualizarRegistroFirestore(id, nuevoRegistro);
-                    alert('Registro actualizado correctamente.');
-                } else {
-                    await agregarRegistroFirestore(nuevoRegistro);
-                    alert('Registro creado exitosamente.');
-                }
+            const data = { tipo: document.getElementById('reg-tipo').value, materia: document.getElementById('reg-materia').value, proceso: document.getElementById('reg-proceso').value, titulo: document.getElementById('reg-titulo').value, modelo: document.getElementById('reg-modelo-url').value, modeloWord: document.getElementById('reg-word-url').value };
+            if(!data.titulo || !data.proceso) return alert("Complete campos");
+            const btn = document.getElementById('btn-submit-form');
+            btn.disabled=true; btn.innerText='Guardando...';
+            try{
+                if(id) await actualizarRegistro(id, data);
+                else await agregarRegistro(data);
+                showSuccessToast(id ? '✅ Registro actualizado' : '✅ Registro creado');
                 cerrarModal();
-                await cargarRegistrosDesdeFirestore();   // Recargar desde Firebase
-                paginaActual = 1;
-                renderizarTabla();
-            } catch (error) {
-                console.error("Error al guardar:", error);
-                alert(`Error al guardar: ${error.message}. Verifica tu conexión o permisos de Firebase.`);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Guardar Registro';
-            }
+                await cargarRegistros();
+                paginaActual=1; renderizarTabla();
+            }catch(err){ alert(`Error: ${err.message}`); }
+            finally{ btn.disabled=false; btn.innerText='Guardar Registro'; }
         };
-        
-        window.editarRegistro = function(id) {
-            const reg = registros.find(r => r.id === id);
-            if (!reg) return;
-            document.getElementById('reg-id').value = reg.id;
-            document.getElementById('reg-tipo').value = reg.tipo;
-            document.getElementById('reg-materia').value = reg.materia;
-            document.getElementById('reg-proceso').value = reg.proceso;
-            document.getElementById('reg-titulo').value = reg.titulo;
-            if (reg.modelo && reg.modelo.trim() !== "") {
-                cargarPreviewDesdeURL(reg.modelo);
-            } else {
-                resetearPreviewPDF();
-            }
-            document.getElementById('modal-titulo').innerText = 'Editar Registro';
-            document.getElementById('modal').style.display = 'flex';
+        window.editarRegistro = function(id){
+            if(!usuarioActual) return alert("Inicia sesión para editar");
+            const reg = registros.find(r=>r.id===id);
+            if(!reg) return;
+            document.getElementById('reg-id').value=reg.id;
+            document.getElementById('reg-tipo').value=reg.tipo;
+            document.getElementById('reg-materia').value=reg.materia;
+            document.getElementById('reg-proceso').value=reg.proceso;
+            document.getElementById('reg-titulo').value=reg.titulo;
+            if(reg.modelo){ hiddenPdfUrl.value=reg.modelo; pdfViewLink.href=reg.modelo; pdfFilenameSpan.innerText='📄 PDF vinculado'; previewContainer.style.display='flex'; }
+            if(reg.modeloWord){ hiddenWordUrl.value=reg.modeloWord; wordViewLink.href=reg.modeloWord; wordFilenameSpan.innerText='📝 Modelo vinculado'; wordPreviewContainer.style.display='flex'; }
+            document.getElementById('modal-titulo').innerText='Editar Registro';
+            document.getElementById('modal').style.display='flex';
         };
-        
-        window.eliminarRegistro = async function(id) {
-            if (!confirm('¿Eliminar este registro permanentemente? (El PDF seguirá en Cloudinary)')) return;
+
+        window.mostrarModalEliminar = function(id) {
+            if(!usuarioActual) return alert("Inicia sesión para eliminar");
+            pendingDeleteId = id;
+            document.getElementById('modal-confirm-delete').style.display = 'flex';
+        };
+        async function ejecutarEliminacion() {
+            if(!pendingDeleteId) return;
             try {
-                await eliminarRegistroFirestore(id);
-                await cargarRegistrosDesdeFirestore();
-                if (registros.length === 0 && paginaActual > 1) paginaActual = 1;
+                await eliminarRegistroFirestore(pendingDeleteId);
+                await cargarRegistros();
+                if(registros.length === 0 && paginaActual > 1) paginaActual = 1;
                 renderizarTabla();
-                alert('Registro eliminado.');
-            } catch (error) {
-                console.error("Error al eliminar:", error);
-                alert(`Error al eliminar: ${error.message}`);
+                showSuccessToast('✅ Registro eliminado correctamente');
+            } catch(err) { alert(`Error al eliminar: ${err.message}`); }
+            finally { pendingDeleteId = null; cerrarModalConfirmDelete(); }
+        }
+        function cerrarModalConfirmDelete() { document.getElementById('modal-confirm-delete').style.display = 'none'; }
+        document.getElementById('btn-confirm-delete').addEventListener('click', ejecutarEliminacion);
+        document.getElementById('btn-cancel-delete').addEventListener('click', () => { pendingDeleteId = null; cerrarModalConfirmDelete(); });
+        document.getElementById('modal-confirm-delete').addEventListener('click', function(e) { if(e.target === this) cerrarModalConfirmDelete(); });
+
+        function actualizarUI() {
+            const landingContainer = document.getElementById('auth-landing-container');
+            const landingInfo = document.getElementById('landing-user-info');
+            const appContainer = document.getElementById('auth-app-container');
+            if(usuarioActual){
+                landingContainer.innerHTML = '<button class="btn btn-secondary" onclick="logoutFirebase()">Cerrar sesión</button>';
+                landingInfo.style.display='inline-flex'; landingInfo.innerHTML=`👤 ${usuarioActual.email}`;
+                if(appContainer) appContainer.innerHTML = `<span class="user-status">👤 ${usuarioActual.email}</span>`;
+            }else{
+                landingContainer.innerHTML = '<button class="btn" onclick="abrirModalAuth()">🔐 Iniciar sesión</button>';
+                landingInfo.style.display='none';
+                if(appContainer) appContainer.innerHTML = '<span class="user-status">⚠️ Sin sesión</span>';
             }
+            renderizarTabla();
+        }
+        window.abrirModalAuth = function(){ document.getElementById('auth-email').value=''; document.getElementById('auth-password').value=''; document.getElementById('auth-error').innerText=''; document.getElementById('modal-auth').style.display='flex'; };
+        window.cerrarModalAuth = function(){ document.getElementById('modal-auth').style.display='none'; };
+        window.autenticarUsuario = async function(){
+            const email = document.getElementById('auth-email').value, pass = document.getElementById('auth-password').value;
+            try{
+                await auth.signInWithEmailAndPassword(email, pass);
+                cerrarModalAuth();
+                if(document.getElementById('landing-page').classList.contains('hidden')===false) await ingresarApp();
+            }catch(e){ document.getElementById('auth-error').innerText='Credenciales incorrectas'; }
         };
-        
-        // ================= NAVEGACIÓN =================
-        window.ingresarApp = async function() {
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            document.getElementById('info-badge')?.classList.add('hidden');
-            await cargarRegistrosDesdeFirestore();
-            actualizarTituloSeccion();
-        };
-        
-        window.confirmarSalir = function() {
-            cerrarModalAlerta();
-            document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('landing-page').classList.remove('hidden');
-            iniciarTemporizadorBadge();
-        };
-        
-        window.abrirModalAlerta = function() { document.getElementById('modal-alerta').style.display = 'flex'; };
-        window.cerrarModalAlerta = function() { document.getElementById('modal-alerta').style.display = 'none'; };
-        
-        // Inicialización
+        window.logoutFirebase = async function(){ await auth.signOut(); };
+        auth.onAuthStateChanged(user=>{ usuarioActual=user; actualizarUI(); });
+        window.ingresarApp = async function(){ document.getElementById('landing-page').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); document.getElementById('info-badge')?.classList.add('hidden'); await cargarRegistros(); actualizarTituloSeccion(); };
+        window.confirmarSalir = function(){ cerrarModalAlerta(); document.getElementById('input-busqueda').value=''; filtroTextoActual=''; document.getElementById('app-container').classList.add('hidden'); document.getElementById('landing-page').classList.remove('hidden'); iniciarTemporizadorBadge(); };
+        window.abrirModalAlerta = function(){ document.getElementById('modal-alerta').style.display='flex'; };
+        window.cerrarModalAlerta = function(){ document.getElementById('modal-alerta').style.display='none'; };
+        function iniciarTemporizadorBadge(){ const b=document.getElementById('info-badge'); if(b){ b.classList.remove('hidden'); b.style.opacity='1'; setTimeout(()=>{ b.style.opacity='0'; setTimeout(()=>b.classList.add('hidden'),500); },4000); } }
+        function setupModalCloseOnOverlay(){
+            document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+                overlay.addEventListener('click',function(e){
+                    if(e.target===overlay) overlay.style.display='none';
+                    if(overlay.id==='modal') resetPreviews();
+                });
+            });
+        }
         iniciarTemporizadorBadge();
+        setupModalCloseOnOverlay();
     </script>
-    <!-- IMPORTANTE: 
-         1. Debes crear un Upload Preset sin firmar en Cloudinary llamado "legal_docs_preset" (Settings → Upload).
-         2. Las reglas de Firestore deben permitir lectura/escritura en la colección "biblioteca".
-         3. Los PDFs se suben con resource_type: "image" (truco) pero se almacenan correctamente.
-    -->
 </body>
 </html>
