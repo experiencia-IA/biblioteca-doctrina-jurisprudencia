@@ -4,35 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Biblioteca de Doctrina y Jurisprudencia | Cloudinary + Firebase</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-compat.js"></script>
     <style>
         :root {
-            --bg-light: #f7fafc;
+            /* Paleta Institucional Profesional */
+            --bg-light: #f4f6f8; 
             --bg-panel: #ffffff;
-            --primary: #1a365d;
-            --primary-light: #2b6cb0;
-            --primary-hover: #2c5282;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --border: #e2e8f0;
-            --danger: #e53e3e;
-            --danger-hover: #c53030;
-            --danger-light: #fed7d7;
-            --success: #38a169;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --primary: #0f2c59; /* Azul Marino Judicial */
+            --primary-light: #1e4585; 
+            --primary-hover: #0a1f3f;
+            --accent: #b08d57; /* Bronce/Dorado sutil */
+            --text-main: #2c3338;
+            --text-muted: #6c7a89;
+            --border: #d1d9e0;
+            --danger: #9b2226; /* Rojo borgoña sobrio */
+            --danger-hover: #7a1b1e;
+            --danger-light: #f9ebea;
+            --success: #2d6a4f; /* Verde bosque oscuro */
+            --shadow: 0 4px 12px -2px rgba(15, 44, 89, 0.08), 0 2px 4px -2px rgba(15, 44, 89, 0.04);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg-light); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            min-height: 100vh; 
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Tipografía para títulos */
+        h1, h2, h3, .sidebar-header h3 {
+            font-family: 'Merriweather', serif;
+            color: var(--primary);
+        }
+
         .creator-badge {
             position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
-            border: 1px solid var(--border); padding: 12px 18px; border-radius: 8px; font-size: 0.8rem;
+            border: 1px solid var(--border); padding: 12px 18px; border-radius: 4px; font-size: 0.8rem;
             color: var(--text-muted); z-index: 1000; box-shadow: var(--shadow); transition: opacity 0.5s ease;
         }
-        .creator-badge span { color: var(--primary-light); font-weight: 600; }
+        .creator-badge span { color: var(--accent); font-weight: 600; }
+
         /* Toasts */
         .toast {
-            position: fixed; bottom: 30px; right: 30px; padding: 12px 24px; border-radius: 8px;
+            position: fixed; bottom: 30px; right: 30px; padding: 12px 24px; border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 500; z-index: 3000;
             opacity: 0; transition: opacity 0.3s ease; pointer-events: none; font-size: 0.9rem;
             display: flex; align-items: center; gap: 10px;
@@ -40,91 +58,141 @@
         .toast-success { background-color: var(--success); color: white; }
         .toast-danger { background-color: var(--danger); color: white; }
         .toast.show { opacity: 1; }
+
+        /* Landing Page Refinada */
         #landing-page {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; text-align: center; padding: 20px;
-            background: radial-gradient(circle at top, #ebf8ff 0%, var(--bg-light) 70%);
+            background: linear-gradient(135deg, var(--bg-light) 0%, #e8ecef 100%);
             animation: fadeIn 0.8s ease-in-out;
         }
-        #landing-page h1 { font-size: 3.2rem; margin-bottom: 15px; font-weight: 600; color: var(--primary); letter-spacing: -1px; }
-        #landing-page h2 { font-size: 1.4rem; color: var(--text-muted); margin-bottom: 40px; font-weight: 400; }
+        #landing-page h1 { 
+            font-size: 3rem; 
+            font-weight: 700; 
+            letter-spacing: -0.5px; 
+            border-bottom: 3px solid var(--accent); 
+            padding-bottom: 15px; 
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        #landing-page h2 { 
+            color: var(--primary-light); 
+            font-family: 'Inter', sans-serif; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-size: 1.1rem; 
+            margin-bottom: 40px; 
+            font-weight: 500;
+        }
+
+        /* Botones estructurados */
         .btn {
             background: var(--primary); color: white; border: none; padding: 12px 26px;
-            font-size: 0.95rem; font-weight: 500; border-radius: 6px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; border-radius: 4px; cursor: pointer;
             transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
+            white-space: nowrap; text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-danger { background: var(--danger); }
         .btn-danger:hover { background: var(--danger-hover); }
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-secondary:hover { background: #edf2f7; }
-        .btn-small { padding: 6px 12px; font-size: 0.8rem; margin-right: 5px; }
-        .btn-upload { background: #2c7a4d; margin-left: 12px; padding: 8px 16px; }
-        .btn-upload:hover { background: #276749; }
+        .btn-secondary:hover { background: #e8ecef; }
+        .btn-small { padding: 6px 12px; font-size: 0.75rem; margin-right: 5px; }
+        .btn-upload { background: var(--success); margin-left: 12px; padding: 8px 16px; }
+        .btn-upload:hover { background: #1e4a36; }
+
         .landing-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 20px; }
-        .user-info-landing { margin-top: 24px; font-size: 0.9rem; background: var(--bg-panel); padding: 8px 16px; border-radius: 40px; display: inline-flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+        .user-info-landing { margin-top: 24px; font-size: 0.9rem; background: var(--bg-panel); padding: 8px 16px; border-radius: 4px; display: inline-flex; align-items: center; gap: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        
         #app-container { display: flex; height: 100vh; width: 100%; animation: fadeIn 0.5s ease-in-out; }
         aside { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
         .sidebar-header { padding: 0 24px 10px; margin-bottom: 5px; }
-        .sidebar-header h3 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        .sidebar-header h3 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-light); }
         .filter-group { display: flex; flex-direction: column; margin-bottom: 20px; }
-        .filter-item { padding: 10px 24px; color: var(--text-main); font-weight: 400; cursor: pointer; border-left: 4px solid transparent; font-size: 0.95rem; }
-        .filter-item:hover, .filter-item.active { background: #f7fafc; color: var(--primary-light); border-left-color: var(--primary-light); font-weight: 500; }
+        .filter-item { padding: 10px 24px; color: var(--text-muted); font-weight: 500; cursor: pointer; border-left: 4px solid transparent; font-size: 0.95rem; transition: all 0.2s; }
+        .filter-item:hover { background: #f8fafc; color: var(--primary); }
+        .filter-item.active { background: #f4f6f8; color: var(--primary); border-left-color: var(--accent); font-weight: 600; }
+        
         main { flex: 1; padding: 35px; overflow-y: auto; display: flex; flex-direction: column; background-color: var(--bg-light); }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px; }
-        .top-bar h2 { font-size: 1.6rem; color: var(--primary); font-weight: 600; margin: 0; flex: 1; }
+        .top-bar h2 { font-size: 1.8rem; margin: 0; flex: 1; border-bottom: 2px solid var(--accent); padding-bottom: 8px; display: inline-block; max-width: max-content; }
         .top-bar-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .top-bar-right { display: flex; align-items: center; gap: 12px; }
-        .search-input { padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; width: 260px; outline: none; }
-        .search-input:focus { border-color: var(--primary-light); }
-        .table-container { background: var(--bg-panel); border-radius: 8px; border: 1px solid var(--border); box-shadow: var(--shadow); flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Inputs estructurados */
+        .search-input { padding: 10px 14px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; width: 260px; outline: none; background-color: #fcfdfd; transition: all 0.2s; }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.2); }
+        
+        /* Tabla Judicial */
+        .table-container { background: var(--bg-panel); border-radius: 4px; border: 1px solid var(--border); box-shadow: var(--shadow); flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; background: #fafbfa; }
-        .pdf-link { background: #eef2ff; color: var(--primary-light); padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
-        .pdf-link:hover { background: #e0e7ff; text-decoration: underline; }
+        th, td { padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: var(--primary); color: #ffffff; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; border-bottom: none; font-family: 'Inter', sans-serif; font-weight: 600; }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:nth-child(even) { background-color: #fafbfc; }
+        tbody tr:hover { background-color: #f0f4f8; }
+
+        /* Etiquetas de Tipo */
+        .badge-tipo { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; border: 1px solid var(--border); background: #fff; padding: 4px 10px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: inline-block; }
+        .badge-doctrina { border-color: var(--success); color: var(--success); }
+        .badge-juris { border-color: var(--primary-light); color: var(--primary-light); }
+
+        .pdf-link { background: #f0f4f8; color: var(--primary-light); padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d1d9e0; transition: all 0.2s; }
+        .pdf-link:hover { background: var(--primary-light); color: white; border-color: var(--primary-light); }
         .badge-empty { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
-        .pagination { padding: 16px 24px; display: flex; justify-content: flex-end; gap: 6px; border-top: 1px solid var(--border); background: #fafbfa; }
-        .page-btn { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .page-btn.active { background: var(--primary-light); border-color: var(--primary-light); color: white; }
-        .modal-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(26,54,93,0.2); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: var(--bg-panel); padding: 32px; border-radius: 10px; max-width: 560px; width: 100%; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        
+        .pagination { padding: 16px 24px; display: flex; justify-content: flex-end; gap: 6px; border-top: 1px solid var(--border); background: #ffffff; }
+        .page-btn { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; }
+        .page-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+        .page-btn:hover:not(.active) { background: #f0f4f8; }
+
+        /* Modales */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(15,44,89,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: var(--bg-panel); padding: 32px; border-radius: 6px; max-width: 560px; width: 100%; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-content h3 { border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        
         .form-group { margin-top: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: 6px; }
-        .upload-area { background: #f9fafb; border: 1px dashed #cbd5e0; border-radius: 8px; padding: 12px; margin-top: 5px; }
-        .pdf-preview { margin-top: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--primary); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 4px; background-color: #fcfdfd; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.2); outline: none; }
+        
+        .upload-area { background: #f8fafc; border: 1px dashed #b0c4de; border-radius: 4px; padding: 16px; margin-top: 5px; }
+        .pdf-preview { margin-top: 10px; background: #ffffff; border: 1px solid var(--border); padding: 10px 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px; }
+        
         .alert-modal-content { max-width: 400px; text-align: center; }
-        .user-status { font-size: 0.8rem; background: #edf2f7; padding: 4px 12px; border-radius: 24px; color: var(--primary); }
-        .auth-modal { max-width: 360px; padding: 28px 24px; border-radius: 16px; }
-        .auth-modal h3 { font-size: 1.4rem; font-weight: 500; margin-bottom: 20px; text-align: center; color: var(--primary); }
-        .auth-modal input { background: #f9fafb; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; }
-        .auth-modal .btn { width: 100%; margin-top: 24px; border-radius: 40px; }
-        .confirm-delete-modal {
-            max-width: 380px;
-            border-top: 6px solid var(--danger);
-            text-align: center;
-        }
-        .confirm-delete-modal h3 { color: var(--danger); margin-bottom: 16px; }
-        .confirm-delete-modal p { margin-bottom: 24px; color: var(--text-muted); }
+        .alert-modal-content h3 { border-bottom: none; justify-content: center; }
+        
+        .user-status { font-size: 0.8rem; background: #f0f4f8; padding: 6px 12px; border-radius: 4px; color: var(--primary); border: 1px solid var(--border); font-weight: 500; }
+        
+        .auth-modal { max-width: 360px; padding: 28px 24px; border-radius: 6px; }
+        .auth-modal h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--primary); border-bottom: none; }
+        .auth-modal input { background: #fcfdfd; border: 1px solid var(--border); border-radius: 4px; padding: 12px 16px; }
+        .auth-modal .btn { width: 100%; margin-top: 24px; }
+        
+        .confirm-delete-modal { max-width: 380px; border-top: 6px solid var(--danger); text-align: center; }
+        .confirm-delete-modal h3 { color: var(--danger); margin-bottom: 16px; border-bottom: none; }
+        .confirm-delete-modal p { margin-bottom: 24px; color: var(--text-muted); line-height: 1.5; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .hidden { display: none !important; }
+        
         @media (max-width: 768px) {
-            #landing-page h1 { font-size: 2rem; }
-            .btn { padding: 8px 16px; font-size: 0.85rem; white-space: normal; }
+            #landing-page h1 { font-size: 2rem; border-bottom-width: 2px; }
+            .btn { padding: 8px 16px; font-size: 0.8rem; white-space: normal; }
             .landing-actions { flex-direction: column; align-items: stretch; }
             #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
             aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }
-            .filter-group { flex-direction: row; overflow-x: auto; white-space: nowrap; }
+            .filter-group { flex-direction: row; overflow-x: auto; white-space: nowrap; margin-bottom: 10px; }
             .filter-item { border-left: none; border-bottom: 3px solid transparent; padding: 8px 16px; }
-            .filter-item.active { border-bottom-color: var(--primary-light); }
+            .filter-item.active { border-bottom-color: var(--accent); background: transparent; }
             main { padding: 15px; }
             .top-bar { flex-direction: column; align-items: stretch; }
+            .top-bar h2 { border-bottom: none; }
             .top-bar-actions, .top-bar-right { justify-content: center; }
             .search-input { width: 100%; }
-            .table-container { overflow-x: auto; }
+            .table-container { overflow-x: auto; border-radius: 0; border-left: none; border-right: none; }
             table { min-width: 950px; }
             .toast { bottom: 20px; right: 20px; left: 20px; text-align: center; justify-content: center; }
         }
@@ -186,12 +254,11 @@
         </main>
     </div>
 
-    <!-- Modales -->
-    <div class="modal-overlay" id="modal"><div class="modal-content"><h3 id="modal-titulo">Nuevo Registro</h3><form id="registro-form" onsubmit="guardarRegistro(event)"><input type="hidden" id="reg-id"><div class="form-group"><label>Tipo</label><select id="reg-tipo" required><option>Doctrina</option><option>Jurisprudencia</option></select></div><div class="form-group"><label>Materia</label><select id="reg-materia" required><option>Civil</option><option>Comercial</option><option>Familia</option><option>Violencia Familiar</option><option>Laboral</option><option>Fiscal</option></select></div><div class="form-group"><label>Proceso</label><input type="text" id="reg-proceso" required></div><div class="form-group"><label>Título</label><textarea id="reg-titulo" rows="2" required></textarea></div><div class="form-group"><label>📄 PDF (Cloudinary)</label><div class="upload-area"><input type="file" id="pdf-file-input" accept="application/pdf"><button type="button" class="btn btn-small btn-upload" id="upload-pdf-btn">Subir PDF</button><div id="upload-status"></div><input type="hidden" id="reg-modelo-url"><div id="pdf-preview-container" class="pdf-preview" style="display:none;"><span id="pdf-filename-display"></span><a href="#" id="pdf-view-link" target="_blank">Ver PDF</a></div></div></div><div class="form-group"><label>📝 Modelo Word</label><div class="upload-area"><input type="file" id="word-file-input" accept=".doc,.docx"><button type="button" class="btn btn-small btn-upload" id="upload-word-btn">Subir Word</button><div id="upload-word-status"></div><input type="hidden" id="reg-word-url"><div id="word-preview-container" class="pdf-preview" style="display:none;"><span id="word-filename-display"></span><a href="#" id="word-view-link" target="_blank">Ver Modelo</a></div></div></div><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button><button type="submit" class="btn">Guardar</button></div></form></div></div>
+    <div class="modal-overlay" id="modal"><div class="modal-content"><h3 id="modal-titulo">Nuevo Registro</h3><form id="registro-form" onsubmit="guardarRegistro(event)"><input type="hidden" id="reg-id"><div class="form-group"><label>Tipo</label><select id="reg-tipo" required><option>Doctrina</option><option>Jurisprudencia</option></select></div><div class="form-group"><label>Materia</label><select id="reg-materia" required><option>Civil</option><option>Comercial</option><option>Familia</option><option>Violencia Familiar</option><option>Laboral</option><option>Fiscal</option></select></div><div class="form-group"><label>Proceso</label><input type="text" id="reg-proceso" required></div><div class="form-group"><label>Título</label><textarea id="reg-titulo" rows="2" required></textarea></div><div class="form-group"><label>📄 PDF (Cloudinary)</label><div class="upload-area"><input type="file" id="pdf-file-input" accept="application/pdf"><button type="button" class="btn btn-small btn-upload" id="upload-pdf-btn">Subir PDF</button><div id="upload-status"></div><input type="hidden" id="reg-modelo-url"><div id="pdf-preview-container" class="pdf-preview" style="display:none;"><span id="pdf-filename-display"></span><a href="#" id="pdf-view-link" target="_blank">Ver PDF</a></div></div></div><div class="form-group"><label>📝 Modelo Word</label><div class="upload-area"><input type="file" id="word-file-input" accept=".doc,.docx"><button type="button" class="btn btn-small btn-upload" id="upload-word-btn">Subir Word</button><div id="upload-word-status"></div><input type="hidden" id="reg-word-url"><div id="word-preview-container" class="pdf-preview" style="display:none;"><span id="word-filename-display"></span><a href="#" id="word-view-link" target="_blank">Ver Modelo</a></div></div></div><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button><button type="submit" class="btn" id="btn-submit-form">Guardar Registro</button></div></form></div></div>
 
     <div class="modal-overlay" id="modal-alerta"><div class="modal-content alert-modal-content"><h3>¿Cerrar Sesión?</h3><p>Está a punto de salir de la Biblioteca.</p><div class="modal-actions"><button class="btn btn-secondary" onclick="cerrarModalAlerta()">Cancelar</button><button class="btn btn-danger" onclick="confirmarSalir()">Salir</button></div></div></div>
 
-    <div class="modal-overlay" id="modal-auth"><div class="modal-content auth-modal"><h3>Iniciar sesión</h3><form onsubmit="event.preventDefault(); autenticarUsuario()"><div class="form-group"><label>Email</label><input type="email" id="auth-email" required></div><div class="form-group"><label>Contraseña</label><input type="password" id="auth-password" required></div><div id="auth-error" style="color:var(--danger); font-size:0.8rem; text-align:center;"></div><button type="submit" class="btn">Ingresar</button><div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="cerrarModalAuth()">Cancelar</button></div></form></div></div>
+    <div class="modal-overlay" id="modal-auth"><div class="modal-content auth-modal"><h3>Iniciar sesión</h3><form onsubmit="event.preventDefault(); autenticarUsuario()"><div class="form-group"><label>Email</label><input type="email" id="auth-email" required></div><div class="form-group"><label>Contraseña</label><input type="password" id="auth-password" required></div><div id="auth-error" style="color:var(--danger); font-size:0.8rem; text-align:center; margin-top: 10px;"></div><button type="submit" class="btn">Ingresar</button><div class="modal-actions"><button type="button" class="btn btn-secondary" style="width: 100%;" onclick="cerrarModalAuth()">Cancelar</button></div></form></div></div>
 
     <div class="modal-overlay" id="modal-confirm-delete">
         <div class="modal-content confirm-delete-modal">
@@ -287,7 +354,11 @@
                 const pdfHtml = reg.modelo ? `<a href="${reg.modelo}" target="_blank" class="pdf-link">📄 Ver PDF</a>` : '<span class="badge-empty">Sin documento</span>';
                 const wordHtml = reg.modeloWord ? `<a href="${reg.modeloWord}" target="_blank" class="pdf-link">📝 Ver Modelo</a>` : '<span class="badge-empty">Sin modelo</span>';
                 const acciones = usuarioActual ? `<button class="btn btn-small btn-secondary" onclick="editarRegistro('${reg.id}')">Editar</button><button class="btn btn-small btn-danger" onclick="mostrarModalEliminar('${reg.id}')">Eliminar</button>` : '<span class="badge-empty">🔒 Inicia sesión</span>';
-                tbody.innerHTML += `<tr><td><span style="background:${reg.tipo==='Doctrina'?'rgba(56,161,105,0.12)':'rgba(43,108,176,0.12)'}; padding:4px 10px; border-radius:4px;">${reg.tipo}</span></td><td>${reg.materia}</td><td><strong>${escapeHtml(reg.proceso)}</strong></td><td>${escapeHtml(reg.titulo)}</td><td>${pdfHtml}</td><td>${wordHtml}</td><td>${acciones}</td></tr>`;
+                
+                // Aplicación de la clase según tipo de registro
+                const claseBadge = reg.tipo === 'Doctrina' ? 'badge-doctrina' : 'badge-juris';
+                
+                tbody.innerHTML += `<tr><td><span class="badge-tipo ${claseBadge}">${reg.tipo}</span></td><td>${reg.materia}</td><td><strong>${escapeHtml(reg.proceso)}</strong></td><td>${escapeHtml(reg.titulo)}</td><td>${pdfHtml}</td><td>${wordHtml}</td><td>${acciones}</td></tr>`;
             });
             const pagDiv = document.getElementById('paginacion');
             pagDiv.innerHTML = '';
@@ -299,11 +370,10 @@
         }
         function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
         
-        // Nuevo título dinámico basado en filtros
         function actualizarTituloSeccion() {
             let tipoTexto = '';
             if (filtroTipoActual === 'Todos') tipoTexto = 'Todos los documentos';
-            else tipoTexto = filtroTipoActual; // "Doctrina" o "Jurisprudencia"
+            else tipoTexto = filtroTipoActual;
             let materiaTexto = '';
             if (filtroMateriaActual !== 'Todas') materiaTexto = ` · ${filtroMateriaActual}`;
             const tituloFinal = tipoTexto + materiaTexto;
