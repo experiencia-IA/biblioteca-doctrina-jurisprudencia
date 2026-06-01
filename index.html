@@ -242,6 +242,68 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .hidden { display: none !important; }
+
+        /* =========================================
+           OPTIMIZACIÓN MÓVIL (NUEVO)
+           ========================================= */
+        @media (max-width: 768px) {
+            /* Landing Page */
+            #landing-page h1 { font-size: 2rem; }
+            #landing-page h2 { font-size: 1.1rem; margin-bottom: 30px; }
+            .creator-badge { top: auto; bottom: 20px; left: 20px; right: 20px; text-align: center; }
+
+            /* Estructura Principal */
+            #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
+            
+            /* Sidebar (convertida a menú superior desplazable) */
+            aside { 
+                width: 100%; 
+                border-right: none; 
+                border-bottom: 1px solid var(--border); 
+                padding: 15px 0 5px; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            }
+            .sidebar-header { padding: 0 15px 5px; }
+            .filter-group { 
+                flex-direction: row; 
+                overflow-x: auto; 
+                white-space: nowrap; 
+                padding: 0 15px 10px; 
+                margin-bottom: 10px;
+                scrollbar-width: none; /* Ocultar barra de scroll en Firefox */
+            }
+            .filter-group::-webkit-scrollbar { display: none; /* Ocultar barra en Chrome/Safari */ }
+            .filter-item { 
+                border-left: none; 
+                border-bottom: 3px solid transparent; 
+                padding: 8px 16px; 
+            }
+            .filter-item:hover, .filter-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary-light);
+                background: transparent;
+            }
+
+            /* Contenido Principal */
+            main { padding: 15px; flex: 1; }
+            .top-bar { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
+            .top-bar h2 { font-size: 1.3rem; }
+            .top-bar-actions { width: 100%; justify-content: space-between; }
+            .top-bar-actions .btn { flex: 1; text-align: center; padding: 10px; }
+
+            /* Tabla Responsiva con Scroll Horizontal */
+            .table-container { border-radius: 6px; overflow-x: auto; display: block; }
+            table { min-width: 800px; /* Fuerza el scroll horizontal para no romper el diseño */ }
+            th, td { padding: 12px 15px; }
+            
+            /* Paginación */
+            .pagination { justify-content: center; flex-wrap: wrap; padding: 12px 15px; }
+
+            /* Modales */
+            .modal-content { padding: 20px; width: 92%; max-height: 90vh; overflow-y: auto; margin: 20px auto; }
+            .modal-actions { flex-direction: column-reverse; gap: 10px; }
+            .modal-actions .btn { width: 100%; margin: 0; }
+        }
     </style>
 </head>
 <body>
