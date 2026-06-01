@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Biblioteca de Doctrina y Jurisprudencia | Cloudinary</title>
+    <title>Biblioteca de Doctrina y Jurisprudencia | Cloudinary + Firebase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Firebase SDK v9 compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-compat.js"></script>
     <style>
         :root {
             --bg-light: #f7fafc;
@@ -315,7 +317,7 @@
                         <tr><th>Tipo</th><th>Materia</th><th>Proceso</th><th>Título / Referencia</th><th>Documento PDF</th><th>Acciones</th></tr>
                     </thead>
                     <tbody id="tabla-cuerpo">
-                        <tr><td colspan="6" style="text-align:center; padding: 40px;">No hay registros. Cree el primero.</td></tr>
+                        <tr><td colspan="6" style="text-align:center; padding: 40px;">Cargando documentos desde Firebase...</td></tr>
                     </tbody>
                 </table>
                 <div class="pagination" id="paginacion"></div>
@@ -352,7 +354,7 @@
                     <textarea id="reg-titulo" rows="2" required></textarea>
                 </div>
                 
-                <!-- SECCIÓN CLOUDINARY CON resource_type: "image" (TRUCO) -->
+                <!-- SECCIÓN CLOUDINARY resource_type: "image" (truco) -->
                 <div class="form-group">
                     <label>📄 Documento PDF (subir a Cloudinary)</label>
                     <div class="upload-area">
@@ -369,7 +371,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
-                    <button type="submit" class="btn">Guardar Registro</button>
+                    <button type="submit" class="btn" id="btn-submit-form">Guardar Registro</button>
                 </div>
             </form>
         </div>
@@ -387,33 +389,33 @@
     </div>
 
     <script>
-        // ================= CONFIGURACIÓN CLOUDINARY (tal como se solicita) =================
-        // Las siguientes líneas muestran la configuración backend típica (requerida en Node.js)
-        // const cloudinary = require('cloudinary').v2;
-        // cloudinary.config({ 
-        //   cloud_name: 'dbdgpfn9g', 
-        //   api_key: '356974964929752', 
-        //   api_secret: '5UUU-T_2lkVoWvUNGqRs5DBbV8E'   // Se debe mantener en backend, no en cliente
-        // });
-        // Para el frontend, usamos el método seguro con upload preset unsigned.
-        // El truco resource_type: "image" también se aplica en la URL de subida.
+        // ================= CONFIGURACIÓN FIREBASE =================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtbeCpZ6ydLo5IhElIIQUHYXV6D1GVHgo",
+            authDomain: "biblioteca-doc-juris.firebaseapp.com",
+            projectId: "biblioteca-doc-juris",
+            storageBucket: "biblioteca-doc-juris.firebasestorage.app",
+            messagingSenderId: "734698545872",
+            appId: "1:734698545872:web:181ed4371af18cc522b4d5"
+        };
         
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const bibliotecaRef = db.collection("biblioteca");
+        
+        // ================= CONFIGURACIÓN CLOUDINARY =================
         const CLOUD_NAME = "dbdgpfn9g";
         const API_KEY = "356974964929752";
-        // IMPORTANTE: Crear un unsigned upload preset en Cloudinary (Settings -> Upload)
-        // con el nombre "legal_docs_preset" y permisos para subir archivos PDF.
-        const UPLOAD_PRESET = "legal_docs_preset";   // 👈 Debes crearlo en tu cuenta
+        const UPLOAD_PRESET = "legal_docs_preset";   // Debes crear este preset unsigned en Cloudinary
         
-        // Almacenamiento local en memoria (sin datos ficticios)
+        // Estado global
         let registros = [];
-        
-        // Estados de filtros y paginación
         let filtroMateriaActual = 'Todas';
         let filtroTipoActual = 'Todos';
         let paginaActual = 1;
         const registrosPorPagina = 10;
         
-        // Elementos del DOM para upload
+        // Elementos DOM para Cloudinary
         const fileInput = document.getElementById('pdf-file-input');
         const uploadBtn = document.getElementById('upload-pdf-btn');
         const uploadStatus = document.getElementById('upload-status');
@@ -422,7 +424,7 @@
         const pdfFilenameSpan = document.getElementById('pdf-filename-display');
         const pdfViewLink = document.getElementById('pdf-view-link');
         
-        // Helper: Badge temporal
+        // Helper badge
         function iniciarTemporizadorBadge() {
             const badge = document.getElementById('info-badge');
             if (badge) {
@@ -435,17 +437,15 @@
             }
         }
         
-        // Subir PDF a Cloudinary usando resource_type: "image" (truco)
+        // ================= FUNCIONES CLOUDINARY =================
         async function subirPDFCloudinary(file) {
             if (!file) throw new Error("No se ha seleccionado ningún archivo");
             if (file.type !== 'application/pdf') throw new Error("Solo se permiten archivos PDF");
-            
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', UPLOAD_PRESET);
             formData.append('api_key', API_KEY);
-            formData.append('resource_type', 'image');   // Truco: subir PDF como "image"
-            
+            formData.append('resource_type', 'image');   // Truco para permitir PDFs
             const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
             const response = await fetch(url, { method: 'POST', body: formData });
             if (!response.ok) {
@@ -453,11 +453,9 @@
                 throw new Error(errorData.error?.message || 'Error al subir archivo a Cloudinary');
             }
             const data = await response.json();
-            // Devolvemos la URL segura del PDF alojado
             return { secure_url: data.secure_url, public_id: data.public_id, original_filename: data.original_filename };
         }
         
-        // Manejar subida con UI
         uploadBtn.addEventListener('click', async () => {
             const file = fileInput.files[0];
             if (!file) {
@@ -465,7 +463,7 @@
                 uploadStatus.style.color = 'var(--danger)';
                 return;
             }
-            uploadStatus.innerText = '⏫ Subiendo PDF a Cloudinary (resource_type: image)...';
+            uploadStatus.innerText = '⏫ Subiendo PDF a Cloudinary...';
             uploadStatus.style.color = 'var(--text-muted)';
             uploadBtn.disabled = true;
             try {
@@ -475,7 +473,7 @@
                 pdfFilenameSpan.innerText = `📎 ${nombreMostrar.substring(0, 40)}`;
                 pdfViewLink.href = resultado.secure_url;
                 previewContainer.style.display = 'flex';
-                uploadStatus.innerText = '✅ PDF subido correctamente a Cloudinary.';
+                uploadStatus.innerText = '✅ PDF subido correctamente.';
                 uploadStatus.style.color = 'var(--success)';
                 fileInput.value = '';
             } catch (error) {
@@ -507,13 +505,62 @@
                 pdfViewLink.href = url;
                 pdfFilenameSpan.innerText = `📄 PDF vinculado (click para ver)`;
                 previewContainer.style.display = 'flex';
-                uploadStatus.innerText = 'Documento PDF ya asociado. Puede reemplazarlo subiendo otro.';
+                uploadStatus.innerText = 'Documento PDF ya asociado.';
             } else {
                 resetearPreviewPDF();
             }
         }
         
-        // Renderizado de tabla con filtros y paginación (datos locales)
+        // ================= FIRESTORE CRUD =================
+        async function cargarRegistrosDesdeFirestore() {
+            try {
+                const snapshot = await bibliotecaRef.orderBy('createdAt', 'desc').get();
+                const docs = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    docs.push({
+                        id: doc.id,
+                        tipo: data.tipo,
+                        materia: data.materia,
+                        proceso: data.proceso,
+                        titulo: data.titulo,
+                        modelo: data.modelo || ''
+                    });
+                });
+                registros = docs;
+                renderizarTabla();
+            } catch (error) {
+                console.error("Error cargando datos desde Firebase:", error);
+                document.getElementById('tabla-cuerpo').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: red;">⚠️ Error conectando con Firebase. Verifica permisos o conexión.</td></tr>';
+            }
+        }
+        
+        async function agregarRegistroFirestore(registro) {
+            await bibliotecaRef.add({
+                tipo: registro.tipo,
+                materia: registro.materia,
+                proceso: registro.proceso,
+                titulo: registro.titulo,
+                modelo: registro.modelo || '',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        async function actualizarRegistroFirestore(id, registro) {
+            await bibliotecaRef.doc(id).update({
+                tipo: registro.tipo,
+                materia: registro.materia,
+                proceso: registro.proceso,
+                titulo: registro.titulo,
+                modelo: registro.modelo || ''
+            });
+        }
+        
+        async function eliminarRegistroFirestore(id) {
+            await bibliotecaRef.doc(id).delete();
+        }
+        
+        // ================= RENDERIZADO, FILTROS, PAGINACIÓN =================
         function renderizarTabla() {
             const tbody = document.getElementById('tabla-cuerpo');
             tbody.innerHTML = '';
@@ -539,18 +586,28 @@
                     tr.innerHTML = `
                         <td><span style="background: ${reg.tipo === 'Doctrina' ? 'rgba(56,161,105,0.12)' : 'rgba(43,108,176,0.12)'}; color: ${reg.tipo === 'Doctrina' ? 'var(--success)' : 'var(--primary-light)'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${reg.tipo}</span></td>
                         <td>${reg.materia}</td>
-                        <td><strong>${reg.proceso}</strong></td>
-                        <td style="max-width: 280px; white-space: normal;">${reg.titulo}</td>
+                        <td><strong>${escapeHtml(reg.proceso)}</strong></td>
+                        <td style="max-width: 280px; white-space: normal;">${escapeHtml(reg.titulo)}</td>
                         <td>${pdfHtml}</td>
                         <td>
-                            <button class="btn btn-small btn-secondary" onclick="editarRegistro(${reg.id})">Editar</button>
-                            <button class="btn btn-small btn-danger" onclick="eliminarRegistro(${reg.id})">Eliminar</button>
+                            <button class="btn btn-small btn-secondary" onclick="editarRegistro('${reg.id}')">Editar</button>
+                            <button class="btn btn-small btn-danger" onclick="eliminarRegistro('${reg.id}')">Eliminar</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
             renderizarPaginacion(totalPaginas);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
         
         function renderizarPaginacion(totalPaginas) {
@@ -578,56 +635,85 @@
             contenedor.appendChild(nextBtn);
         }
         
-        // CRUD con almacenamiento local + Cloudinary URLs
-        function abrirModal(editMode = false) {
+        function actualizarTituloSeccion() {
+            document.getElementById('titulo-seccion').innerText = `Registros (${filtroTipoActual} / Materia: ${filtroMateriaActual})`;
+        }
+        
+        // ================= FILTROS GLOBALES =================
+        window.filtrarMateria = function(materia, event) {
+            filtroMateriaActual = materia;
+            paginaActual = 1;
+            document.querySelectorAll('#filtros-materia .filter-item').forEach(el => el.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+            actualizarTituloSeccion();
+            renderizarTabla();
+        };
+        
+        window.filtrarTipo = function(tipo, event) {
+            filtroTipoActual = tipo;
+            paginaActual = 1;
+            document.querySelectorAll('#filtros-tipo .filter-item').forEach(el => el.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+            actualizarTituloSeccion();
+            renderizarTabla();
+        };
+        
+        // ================= CRUD MODAL =================
+        window.abrirModal = function() {
             resetearPreviewPDF();
             document.getElementById('registro-form').reset();
             document.getElementById('reg-id').value = '';
             document.getElementById('modal-titulo').innerText = 'Nuevo Registro';
             document.getElementById('modal').style.display = 'flex';
-        }
+        };
         
-        function cerrarModal() {
+        window.cerrarModal = function() {
             document.getElementById('modal').style.display = 'none';
             resetearPreviewPDF();
-        }
+        };
         
-        function guardarRegistro(e) {
+        window.guardarRegistro = async function(e) {
             e.preventDefault();
             const id = document.getElementById('reg-id').value;
             const tipo = document.getElementById('reg-tipo').value;
             const materia = document.getElementById('reg-materia').value;
             const proceso = document.getElementById('reg-proceso').value;
             const titulo = document.getElementById('reg-titulo').value;
-            const pdfUrl = document.getElementById('reg-modelo-url').value;
+            const modeloUrl = document.getElementById('reg-modelo-url').value; // campo corregido
             
             if (!titulo || !proceso) {
                 alert("Complete los campos obligatorios (Proceso y Título).");
                 return;
             }
             
-            if (id) {
-                const index = registros.findIndex(r => r.id == id);
-                if (index !== -1) {
-                    registros[index] = { 
-                        ...registros[index],
-                        tipo, materia, proceso, titulo,
-                        modelo: pdfUrl || registros[index].modelo || '' 
-                    };
+            const nuevoRegistro = { tipo, materia, proceso, titulo, modelo: modeloUrl };
+            const submitBtn = document.getElementById('btn-submit-form');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Guardando...';
+            
+            try {
+                if (id) {
+                    await actualizarRegistroFirestore(id, nuevoRegistro);
+                    alert('Registro actualizado correctamente.');
+                } else {
+                    await agregarRegistroFirestore(nuevoRegistro);
+                    alert('Registro creado exitosamente.');
                 }
-            } else {
-                const nuevoId = registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1;
-                registros.unshift({ 
-                    id: nuevoId, tipo, materia, proceso, titulo,
-                    modelo: pdfUrl || ''
-                });
+                cerrarModal();
+                await cargarRegistrosDesdeFirestore();   // Recargar desde Firebase
+                paginaActual = 1;
+                renderizarTabla();
+            } catch (error) {
+                console.error("Error al guardar:", error);
+                alert(`Error al guardar: ${error.message}. Verifica tu conexión o permisos de Firebase.`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Guardar Registro';
             }
-            cerrarModal();
-            renderizarTabla();
-        }
+        };
         
-        function editarRegistro(id) {
-            const reg = registros.find(r => r.id == id);
+        window.editarRegistro = function(id) {
+            const reg = registros.find(r => r.id === id);
             if (!reg) return;
             document.getElementById('reg-id').value = reg.id;
             document.getElementById('reg-tipo').value = reg.tipo;
@@ -641,75 +727,48 @@
             }
             document.getElementById('modal-titulo').innerText = 'Editar Registro';
             document.getElementById('modal').style.display = 'flex';
-        }
+        };
         
-        function eliminarRegistro(id) {
-            if (confirm('¿Eliminar este registro permanentemente? (El PDF seguirá alojado en Cloudinary)')) {
-                registros = registros.filter(r => r.id != id);
+        window.eliminarRegistro = async function(id) {
+            if (!confirm('¿Eliminar este registro permanentemente? (El PDF seguirá en Cloudinary)')) return;
+            try {
+                await eliminarRegistroFirestore(id);
+                await cargarRegistrosDesdeFirestore();
                 if (registros.length === 0 && paginaActual > 1) paginaActual = 1;
                 renderizarTabla();
+                alert('Registro eliminado.');
+            } catch (error) {
+                console.error("Error al eliminar:", error);
+                alert(`Error al eliminar: ${error.message}`);
             }
-        }
+        };
         
-        // Filtros
-        function filtrarMateria(materia, event) {
-            filtroMateriaActual = materia;
-            paginaActual = 1;
-            document.querySelectorAll('#filtros-materia .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            actualizarTituloSeccion();
-            renderizarTabla();
-        }
-        
-        function filtrarTipo(tipo, event) {
-            filtroTipoActual = tipo;
-            paginaActual = 1;
-            document.querySelectorAll('#filtros-tipo .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            actualizarTituloSeccion();
-            renderizarTabla();
-        }
-        
-        function actualizarTituloSeccion() {
-            document.getElementById('titulo-seccion').innerText = `Registros (${filtroTipoActual} / Materia: ${filtroMateriaActual})`;
-        }
-        
-        // Navegación
-        function ingresarApp() {
+        // ================= NAVEGACIÓN =================
+        window.ingresarApp = async function() {
             document.getElementById('landing-page').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('info-badge')?.classList.add('hidden');
-            renderizarTabla();
-        }
+            await cargarRegistrosDesdeFirestore();
+            actualizarTituloSeccion();
+        };
         
-        function confirmarSalir() {
+        window.confirmarSalir = function() {
             cerrarModalAlerta();
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('landing-page').classList.remove('hidden');
             iniciarTemporizadorBadge();
-        }
+        };
         
-        function abrirModalAlerta() { document.getElementById('modal-alerta').style.display = 'flex'; }
-        function cerrarModalAlerta() { document.getElementById('modal-alerta').style.display = 'none'; }
+        window.abrirModalAlerta = function() { document.getElementById('modal-alerta').style.display = 'flex'; };
+        window.cerrarModalAlerta = function() { document.getElementById('modal-alerta').style.display = 'none'; };
         
-        // Exposición global de funciones necesarias
-        window.abrirModal = abrirModal;
-        window.cerrarModal = cerrarModal;
-        window.guardarRegistro = guardarRegistro;
-        window.editarRegistro = editarRegistro;
-        window.eliminarRegistro = eliminarRegistro;
-        window.filtrarMateria = filtrarMateria;
-        window.filtrarTipo = filtrarTipo;
-        window.ingresarApp = ingresarApp;
-        window.confirmarSalir = confirmarSalir;
-        window.abrirModalAlerta = abrirModalAlerta;
-        window.cerrarModalAlerta = cerrarModalAlerta;
-        
+        // Inicialización
         iniciarTemporizadorBadge();
     </script>
-    <!-- NOTA: Para que la subida funcione, debes crear un Upload Preset sin firmar en Cloudinary:
-         Ir a Dashboard → Settings → Upload → Upload presets → Add unsigned preset
-         Nombrarlo exactamente "legal_docs_preset" y permitir tipo de archivo PDF.
-         Esto permite subidas directas desde el frontend usando el truco resource_type: "image". -->
+    <!-- IMPORTANTE: 
+         1. Debes crear un Upload Preset sin firmar en Cloudinary llamado "legal_docs_preset" (Settings → Upload).
+         2. Las reglas de Firestore deben permitir lectura/escritura en la colección "biblioteca".
+         3. Los PDFs se suben con resource_type: "image" (truco) pero se almacenan correctamente.
+    -->
 </body>
 </html>
