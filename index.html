@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca de Doctrina y Jurisprudencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Biblioteca de Doctrina y Jurisprudencia | Cloudinary</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -37,7 +37,6 @@
             min-height: 100vh;
         }
 
-        /* Badge Informativo Flotante (Solo en Landing Page, desaparece en 4s) */
         .creator-badge {
             position: fixed;
             top: 20px;
@@ -56,7 +55,6 @@
         }
         .creator-badge span { color: var(--primary-light); font-weight: 600; }
 
-        /* Landing Page */
         #landing-page {
             display: flex;
             flex-direction: column;
@@ -71,7 +69,6 @@
         #landing-page h1 { font-size: 3.2rem; margin-bottom: 15px; font-weight: 600; color: var(--primary); letter-spacing: -1px; }
         #landing-page h2 { font-size: 1.4rem; color: var(--text-muted); margin-bottom: 40px; font-weight: 400; }
         
-        /* Botones */
         .btn {
             background: var(--primary);
             color: white;
@@ -90,8 +87,9 @@
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
         .btn-secondary:hover { background: #edf2f7; }
         .btn-small { padding: 6px 12px; font-size: 0.8rem; margin-right: 5px; font-weight: 400; }
+        .btn-upload { background: #2c7a4d; margin-left: 12px; padding: 8px 16px; }
+        .btn-upload:hover { background: #276749; }
 
-        /* App Layout */
         #app-container {
             display: flex;
             height: 100vh;
@@ -99,7 +97,6 @@
             animation: fadeIn 0.5s ease-in-out;
         }
 
-        /* Sidebar */
         aside {
             width: 280px;
             background: var(--bg-panel);
@@ -128,7 +125,6 @@
             font-weight: 500;
         }
 
-        /* Main Content */
         main {
             flex: 1;
             padding: 35px;
@@ -146,7 +142,6 @@
         .top-bar h2 { font-size: 1.6rem; color: var(--primary); font-weight: 600; }
         .top-bar-actions { display: flex; gap: 12px; }
         
-        /* Table */
         .table-container {
             background: var(--bg-panel);
             border-radius: 8px;
@@ -166,8 +161,22 @@
         th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; background: #fafbfa; }
         td { font-size: 0.95rem; color: var(--text-main); }
         tr:hover { background: #fdfdfd; }
+        .pdf-link {
+            background: #eef2ff;
+            color: var(--primary-light);
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pdf-link:hover { background: #e0e7ff; text-decoration: underline; }
+        .badge-empty { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
 
-        /* Pagination */
         .pagination {
             padding: 16px 24px;
             display: flex;
@@ -186,13 +195,10 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.15s;
         }
-        .page-btn:hover { background: #f7fafc; border-color: #cbd5e0; }
-        .page-btn.active { background: var(--primary-light); border-color: var(--primary-light); color: white; pointer-events: none; }
-        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #edf2f7; }
+        .page-btn.active { background: var(--primary-light); border-color: var(--primary-light); color: white; }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Modales */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -202,107 +208,63 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            animation: fadeIn 0.2s ease-out;
         }
         .modal-content {
             background: var(--bg-panel);
             padding: 32px;
             border-radius: 10px;
             width: 100%;
-            max-width: 520px;
+            max-width: 560px;
             border: 1px solid var(--border);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
         }
         .modal-content h3 { font-size: 1.3rem; color: var(--primary); font-weight: 600; }
-        
-        /* Formulario */
-        .form-group { margin-top: 15px; }
-        .form-group label { display: block; margin-bottom: 6px; color: var(--text-main); font-weight: 500; font-size: 0.9rem; }
+        .form-group { margin-top: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px 12px;
             background: #ffffff;
             border: 1px solid #cbd5e0;
-            color: var(--text-main);
             border-radius: 6px;
             font-size: 0.95rem;
-            transition: border-color 0.2s;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        .upload-area {
+            background: #f9fafb;
+            border: 1px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 5px;
+        }
+        .pdf-preview {
+            margin-top: 10px;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
-
-        /* Alerta Modal */
         .alert-modal-content { max-width: 400px; text-align: center; }
-        .alert-modal-content h3 { color: var(--danger); margin-bottom: 12px; }
-        .alert-modal-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        .upload-status { font-size: 0.8rem; margin-top: 6px; color: var(--text-muted); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .hidden { display: none !important; }
 
-        /* =========================================
-           OPTIMIZACIÓN MÓVIL (NUEVO)
-           ========================================= */
         @media (max-width: 768px) {
-            /* Landing Page */
             #landing-page h1 { font-size: 2rem; }
-            #landing-page h2 { font-size: 1.1rem; margin-bottom: 30px; }
-            .creator-badge { top: auto; bottom: 20px; left: 20px; right: 20px; text-align: center; }
-
-            /* Estructura Principal */
             #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
-            
-            /* Sidebar (convertida a menú superior desplazable) */
-            aside { 
-                width: 100%; 
-                border-right: none; 
-                border-bottom: 1px solid var(--border); 
-                padding: 15px 0 5px; 
-                box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            }
-            .sidebar-header { padding: 0 15px 5px; }
-            .filter-group { 
-                flex-direction: row; 
-                overflow-x: auto; 
-                white-space: nowrap; 
-                padding: 0 15px 10px; 
-                margin-bottom: 10px;
-                scrollbar-width: none; /* Ocultar barra de scroll en Firefox */
-            }
-            .filter-group::-webkit-scrollbar { display: none; /* Ocultar barra en Chrome/Safari */ }
-            .filter-item { 
-                border-left: none; 
-                border-bottom: 3px solid transparent; 
-                padding: 8px 16px; 
-            }
-            .filter-item:hover, .filter-item.active {
-                border-left-color: transparent;
-                border-bottom-color: var(--primary-light);
-                background: transparent;
-            }
-
-            /* Contenido Principal */
-            main { padding: 15px; flex: 1; }
-            .top-bar { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
-            .top-bar h2 { font-size: 1.3rem; }
-            .top-bar-actions { width: 100%; justify-content: space-between; }
-            .top-bar-actions .btn { flex: 1; text-align: center; padding: 10px; }
-
-            /* Tabla Responsiva con Scroll Horizontal */
-            .table-container { border-radius: 6px; overflow-x: auto; display: block; }
-            table { min-width: 800px; /* Fuerza el scroll horizontal para no romper el diseño */ }
-            th, td { padding: 12px 15px; }
-            
-            /* Paginación */
-            .pagination { justify-content: center; flex-wrap: wrap; padding: 12px 15px; }
-
-            /* Modales */
-            .modal-content { padding: 20px; width: 92%; max-height: 90vh; overflow-y: auto; margin: 20px auto; }
-            .modal-actions { flex-direction: column-reverse; gap: 10px; }
-            .modal-actions .btn { width: 100%; margin: 0; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0 5px; }
+            .filter-group { flex-direction: row; overflow-x: auto; white-space: nowrap; margin-bottom: 8px; }
+            .filter-item { border-left: none; border-bottom: 3px solid transparent; padding: 8px 16px; }
+            .filter-item.active { border-bottom-color: var(--primary-light); background: transparent; }
+            main { padding: 15px; }
+            .top-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .table-container { overflow-x: auto; }
+            table { min-width: 800px; }
+            .modal-content { padding: 20px; width: 92%; }
         }
     </style>
 </head>
@@ -321,18 +283,13 @@
 
     <div id="app-container" class="hidden">
         <aside>
-            <div class="sidebar-header">
-                <h3>Filtrar por Fuente</h3>
-            </div>
+            <div class="sidebar-header"><h3>Filtrar por Fuente</h3></div>
             <div class="filter-group" id="filtros-tipo">
                 <div class="filter-item active" onclick="filtrarTipo('Todos', event)">Todos los Tipos</div>
                 <div class="filter-item" onclick="filtrarTipo('Doctrina', event)">Doctrina</div>
                 <div class="filter-item" onclick="filtrarTipo('Jurisprudencia', event)">Jurisprudencia</div>
             </div>
-
-            <div class="sidebar-header">
-                <h3>Filtrar por Materia</h3>
-            </div>
+            <div class="sidebar-header"><h3>Filtrar por Materia</h3></div>
             <div class="filter-group" id="filtros-materia">
                 <div class="filter-item active" onclick="filtrarMateria('Todas', event)">Todas las Materias</div>
                 <div class="filter-item" onclick="filtrarMateria('Civil', event)">Civil</div>
@@ -352,24 +309,16 @@
                     <button class="btn btn-danger" onclick="abrirModalAlerta()">Salir</button>
                 </div>
             </div>
-            
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Materia</th>
-                            <th>Proceso</th>
-                            <th>Título / Referencia</th>
-                            <th>Modelo Escrito</th>
-                            <th>Acciones</th>
-                        </tr>
+                        <tr><th>Tipo</th><th>Materia</th><th>Proceso</th><th>Título / Referencia</th><th>Documento PDF</th><th>Acciones</th></tr>
                     </thead>
                     <tbody id="tabla-cuerpo">
-                        </tbody>
+                        <tr><td colspan="6" style="text-align:center; padding: 40px;">No hay registros. Cree el primero.</td></tr>
+                    </tbody>
                 </table>
-                <div class="pagination" id="paginacion">
-                    </div>
+                <div class="pagination" id="paginacion"></div>
             </div>
         </main>
     </div>
@@ -389,12 +338,9 @@
                 <div class="form-group">
                     <label>Materia</label>
                     <select id="reg-materia" required>
-                        <option value="Civil">Civil</option>
-                        <option value="Comercial">Comercial</option>
-                        <option value="Familia">Familia</option>
-                        <option value="Violencia Familiar">Violencia Familiar</option>
-                        <option value="Laboral">Laboral</option>
-                        <option value="Fiscal">Fiscal</option>
+                        <option value="Civil">Civil</option><option value="Comercial">Comercial</option>
+                        <option value="Familia">Familia</option><option value="Violencia Familiar">Violencia Familiar</option>
+                        <option value="Laboral">Laboral</option><option value="Fiscal">Fiscal</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -405,13 +351,25 @@
                     <label>Título / Descripción</label>
                     <textarea id="reg-titulo" rows="2" required></textarea>
                 </div>
+                
+                <!-- SECCIÓN CLOUDINARY CON resource_type: "image" (TRUCO) -->
                 <div class="form-group">
-                    <label>Modelo de Escrito Referente</label>
-                    <input type="text" id="reg-modelo" placeholder="Ej: Modelo de Demanda / Contestación..." required>
+                    <label>📄 Documento PDF (subir a Cloudinary)</label>
+                    <div class="upload-area">
+                        <input type="file" id="pdf-file-input" accept="application/pdf" style="margin-bottom: 8px;">
+                        <button type="button" class="btn btn-small btn-upload" id="upload-pdf-btn">⬆️ Subir a Cloudinary</button>
+                        <div id="upload-status" class="upload-status"></div>
+                        <input type="hidden" id="reg-modelo-url" value="">
+                        <div id="pdf-preview-container" class="pdf-preview" style="display: none;">
+                            <span id="pdf-filename-display"></span>
+                            <a href="#" id="pdf-view-link" target="_blank" class="pdf-link" style="background:transparent; padding:0;">Ver PDF 📄</a>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
-                    <button type="submit" class="btn">Guardar</button>
+                    <button type="submit" class="btn">Guardar Registro</button>
                 </div>
             </form>
         </div>
@@ -429,27 +387,42 @@
     </div>
 
     <script>
-        // Dataset inicial simulado con la nueva columna 'modelo'
-        let registros = [
-            { id: 1, tipo: 'Jurisprudencia', materia: 'Civil', proceso: 'Daños y Perjuicios', titulo: 'Fallo CSJN: Responsabilidad civil por accidentes de tránsito.', modelo: 'Demanda de Daños Automotor.docx' },
-            { id: 2, tipo: 'Doctrina', materia: 'Familia', proceso: 'Alimentos', titulo: 'Tratado de Derecho de Familia - Kemelmajer: Cuotas extraordinarias.', modelo: 'Incidente Cuota Extraordinaria.docx' },
-            { id: 3, tipo: 'Jurisprudencia', materia: 'Violencia Familiar', proceso: 'Medidas Cautelares', titulo: 'Expte 123/25 - Exclusión del hogar y perímetro judicial.', modelo: 'Solicitud Exclusión de Urgencia.pdf' },
-            { id: 4, tipo: 'Doctrina', materia: 'Laboral', proceso: 'Despido', titulo: 'Indemnizaciones laborales agravadas por fraude.', modelo: 'Modelo Demanda Despido Incumplido.docx' },
-            { id: 5, tipo: 'Jurisprudencia', materia: 'Comercial', proceso: 'Concurso Preventivo', titulo: 'Verificación de créditos tardíos - Fallo Plenario.', modelo: 'Escrito de Verificación Tardía.docx' },
-            { id: 6, tipo: 'Doctrina', materia: 'Fiscal', proceso: 'Ejecución Fiscal', titulo: 'Excepciones oponibles en juicios de apremio.', modelo: 'Oposición de Excepciones Apremio.pdf' },
-            { id: 7, tipo: 'Jurisprudencia', materia: 'Familia', proceso: 'Divorcio', titulo: 'Compensación económica: requisitos temporales.', modelo: 'Propuesta Reguladora Compensación.docx' },
-            { id: 8, tipo: 'Doctrina', materia: 'Civil', proceso: 'Sucesión Ab-Intestato', titulo: 'Cesión de derechos hereditarios por acto público.', modelo: 'Inicio de Sucesión de Práctica.docx' },
-            { id: 9, tipo: 'Jurisprudencia', materia: 'Laboral', proceso: 'Accidente de Trabajo', titulo: 'Aplicación de la fórmula Méndez en incapacidad.', modelo: 'Liquidación Fórmula Méndez.xlsx' },
-            { id: 10, tipo: 'Doctrina', materia: 'Comercial', proceso: 'Sociedades', titulo: 'Levantamiento del velo societario en fraudes a terceros.', modelo: 'Incidente de Inoponibilidad.docx' },
-            { id: 11, tipo: 'Jurisprudencia', materia: 'Civil', proceso: 'Usucapión', titulo: 'Prueba compuesta en la posesión veinteñal.', modelo: 'Modelo Demanda Adquisitiva.docx' }
-        ];
-
+        // ================= CONFIGURACIÓN CLOUDINARY (tal como se solicita) =================
+        // Las siguientes líneas muestran la configuración backend típica (requerida en Node.js)
+        // const cloudinary = require('cloudinary').v2;
+        // cloudinary.config({ 
+        //   cloud_name: 'dbdgpfn9g', 
+        //   api_key: '356974964929752', 
+        //   api_secret: '5UUU-T_2lkVoWvUNGqRs5DBbV8E'   // Se debe mantener en backend, no en cliente
+        // });
+        // Para el frontend, usamos el método seguro con upload preset unsigned.
+        // El truco resource_type: "image" también se aplica en la URL de subida.
+        
+        const CLOUD_NAME = "dbdgpfn9g";
+        const API_KEY = "356974964929752";
+        // IMPORTANTE: Crear un unsigned upload preset en Cloudinary (Settings -> Upload)
+        // con el nombre "legal_docs_preset" y permisos para subir archivos PDF.
+        const UPLOAD_PRESET = "legal_docs_preset";   // 👈 Debes crearlo en tu cuenta
+        
+        // Almacenamiento local en memoria (sin datos ficticios)
+        let registros = [];
+        
+        // Estados de filtros y paginación
         let filtroMateriaActual = 'Todas';
         let filtroTipoActual = 'Todos';
         let paginaActual = 1;
         const registrosPorPagina = 10;
-
-        // Temporizador para el Badge Informativo (4s en Landing Page)
+        
+        // Elementos del DOM para upload
+        const fileInput = document.getElementById('pdf-file-input');
+        const uploadBtn = document.getElementById('upload-pdf-btn');
+        const uploadStatus = document.getElementById('upload-status');
+        const hiddenPdfUrl = document.getElementById('reg-modelo-url');
+        const previewContainer = document.getElementById('pdf-preview-container');
+        const pdfFilenameSpan = document.getElementById('pdf-filename-display');
+        const pdfViewLink = document.getElementById('pdf-view-link');
+        
+        // Helper: Badge temporal
         function iniciarTemporizadorBadge() {
             const badge = document.getElementById('info-badge');
             if (badge) {
@@ -461,84 +434,114 @@
                 }, 4000);
             }
         }
-
-        window.addEventListener('DOMContentLoaded', iniciarTemporizadorBadge);
-
-        // SPA Nav - Ingresar
-        function ingresarApp() {
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
+        
+        // Subir PDF a Cloudinary usando resource_type: "image" (truco)
+        async function subirPDFCloudinary(file) {
+            if (!file) throw new Error("No se ha seleccionado ningún archivo");
+            if (file.type !== 'application/pdf') throw new Error("Solo se permiten archivos PDF");
             
-            const badge = document.getElementById('info-badge');
-            if (badge) badge.classList.add('hidden');
-
-            renderizarTabla();
-        }
-
-        // SPA Nav - Salir
-        function confirmarSalir() {
-            cerrarModalAlerta();
-            document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('landing-page').classList.remove('hidden');
-            iniciarTemporizadorBadge();
-        }
-
-        // Filtro de Materia
-        function filtrarMateria(materia, event) {
-            filtroMateriaActual = materia;
-            paginaActual = 1;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+            formData.append('api_key', API_KEY);
+            formData.append('resource_type', 'image');   // Truco: subir PDF como "image"
             
-            document.querySelectorAll('#filtros-materia .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            
-            actualizarTituloSeccion();
-            renderizarTabla();
+            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+            const response = await fetch(url, { method: 'POST', body: formData });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || 'Error al subir archivo a Cloudinary');
+            }
+            const data = await response.json();
+            // Devolvemos la URL segura del PDF alojado
+            return { secure_url: data.secure_url, public_id: data.public_id, original_filename: data.original_filename };
         }
-
-        // Filtro de Tipo (Doctrina / Jurisprudencia)
-        function filtrarTipo(tipo, event) {
-            filtroTipoActual = tipo;
-            paginaActual = 1;
-            
-            document.querySelectorAll('#filtros-tipo .filter-item').forEach(el => el.classList.remove('active'));
-            if(event) event.target.classList.add('active');
-            
-            actualizarTituloSeccion();
-            renderizarTabla();
+        
+        // Manejar subida con UI
+        uploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                uploadStatus.innerText = '❌ Selecciona un archivo PDF primero.';
+                uploadStatus.style.color = 'var(--danger)';
+                return;
+            }
+            uploadStatus.innerText = '⏫ Subiendo PDF a Cloudinary (resource_type: image)...';
+            uploadStatus.style.color = 'var(--text-muted)';
+            uploadBtn.disabled = true;
+            try {
+                const resultado = await subirPDFCloudinary(file);
+                hiddenPdfUrl.value = resultado.secure_url;
+                const nombreMostrar = resultado.original_filename || 'documento.pdf';
+                pdfFilenameSpan.innerText = `📎 ${nombreMostrar.substring(0, 40)}`;
+                pdfViewLink.href = resultado.secure_url;
+                previewContainer.style.display = 'flex';
+                uploadStatus.innerText = '✅ PDF subido correctamente a Cloudinary.';
+                uploadStatus.style.color = 'var(--success)';
+                fileInput.value = '';
+            } catch (error) {
+                console.error(error);
+                uploadStatus.innerText = `❌ Error: ${error.message}`;
+                uploadStatus.style.color = 'var(--danger)';
+                hiddenPdfUrl.value = '';
+            } finally {
+                uploadBtn.disabled = false;
+                setTimeout(() => {
+                    if (uploadStatus.innerText.includes('correctamente')) 
+                        setTimeout(() => uploadStatus.innerText = '', 2500);
+                }, 2500);
+            }
+        });
+        
+        function resetearPreviewPDF() {
+            hiddenPdfUrl.value = '';
+            previewContainer.style.display = 'none';
+            pdfFilenameSpan.innerText = '';
+            pdfViewLink.href = '#';
+            uploadStatus.innerText = '';
+            fileInput.value = '';
         }
-
-        function actualizarTituloSeccion() {
-            document.getElementById('titulo-seccion').innerText = `Registros (${filtroTipoActual} / Materia: ${filtroMateriaActual})`;
+        
+        function cargarPreviewDesdeURL(url) {
+            if (url && url.trim() !== "") {
+                hiddenPdfUrl.value = url;
+                pdfViewLink.href = url;
+                pdfFilenameSpan.innerText = `📄 PDF vinculado (click para ver)`;
+                previewContainer.style.display = 'flex';
+                uploadStatus.innerText = 'Documento PDF ya asociado. Puede reemplazarlo subiendo otro.';
+            } else {
+                resetearPreviewPDF();
+            }
         }
-
-        // Renderizado Dinámico de Tabla con Múltiples Filtros y Columna 'Modelo'
+        
+        // Renderizado de tabla con filtros y paginación (datos locales)
         function renderizarTabla() {
             const tbody = document.getElementById('tabla-cuerpo');
             tbody.innerHTML = '';
-
-            // Aplicación combinada de filtros (Materia + Tipo)
+            
             let datosFiltrados = registros.filter(r => {
                 const cumpleMateria = (filtroMateriaActual === 'Todas' || r.materia === filtroMateriaActual);
                 const cumpleTipo = (filtroTipoActual === 'Todos' || r.tipo === filtroTipoActual);
                 return cumpleMateria && cumpleTipo;
             });
-
+            
             const totalPaginas = Math.ceil(datosFiltrados.length / registrosPorPagina);
             const inicio = (paginaActual - 1) * registrosPorPagina;
-            const fin = inicio + registrosPorPagina;
-            const datosPaginados = datosFiltrados.slice(inicio, fin);
-
+            const datosPaginados = datosFiltrados.slice(inicio, inicio + registrosPorPagina);
+            
             if (datosPaginados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 30px;">No se encontraron registros para esta selección.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px;">📭 No hay registros. Cree el primero usando "+ Nuevo Registro".</td></tr>';
             } else {
                 datosPaginados.forEach(reg => {
+                    const pdfHtml = reg.modelo && reg.modelo.trim() !== "" 
+                        ? `<a href="${reg.modelo}" target="_blank" class="pdf-link">📄 Ver PDF</a>` 
+                        : `<span class="badge-empty">Sin documento</span>`;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><span style="background: ${reg.tipo === 'Doctrina' ? 'rgba(56,161,105,0.12)' : 'rgba(43,108,176,0.12)'}; color: ${reg.tipo === 'Doctrina' ? 'var(--success)' : 'var(--primary-light)'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">${reg.tipo}</span></td>
+                        <td><span style="background: ${reg.tipo === 'Doctrina' ? 'rgba(56,161,105,0.12)' : 'rgba(43,108,176,0.12)'}; color: ${reg.tipo === 'Doctrina' ? 'var(--success)' : 'var(--primary-light)'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${reg.tipo}</span></td>
                         <td>${reg.materia}</td>
                         <td><strong>${reg.proceso}</strong></td>
-                        <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${reg.titulo}">${reg.titulo}</td>
-                        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-light); font-weight: 500;" title="${reg.modelo}">📂 ${reg.modelo}</td>
+                        <td style="max-width: 280px; white-space: normal;">${reg.titulo}</td>
+                        <td>${pdfHtml}</td>
                         <td>
                             <button class="btn btn-small btn-secondary" onclick="editarRegistro(${reg.id})">Editar</button>
                             <button class="btn btn-small btn-danger" onclick="eliminarRegistro(${reg.id})">Eliminar</button>
@@ -549,20 +552,17 @@
             }
             renderizarPaginacion(totalPaginas);
         }
-
+        
         function renderizarPaginacion(totalPaginas) {
             const contenedor = document.getElementById('paginacion');
             contenedor.innerHTML = '';
-            
             if (totalPaginas <= 1) return;
-
             const prevBtn = document.createElement('button');
             prevBtn.className = 'page-btn';
             prevBtn.innerText = '«';
             prevBtn.disabled = paginaActual === 1;
             prevBtn.onclick = () => { paginaActual--; renderizarTabla(); };
             contenedor.appendChild(prevBtn);
-
             for (let i = 1; i <= totalPaginas; i++) {
                 const btn = document.createElement('button');
                 btn.className = `page-btn ${paginaActual === i ? 'active' : ''}`;
@@ -570,7 +570,6 @@
                 btn.onclick = () => { paginaActual = i; renderizarTabla(); };
                 contenedor.appendChild(btn);
             }
-
             const nextBtn = document.createElement('button');
             nextBtn.className = 'page-btn';
             nextBtn.innerText = '»';
@@ -578,19 +577,21 @@
             nextBtn.onclick = () => { paginaActual++; renderizarTabla(); };
             contenedor.appendChild(nextBtn);
         }
-
-        // CRUD Modales
-        function abrirModal() {
+        
+        // CRUD con almacenamiento local + Cloudinary URLs
+        function abrirModal(editMode = false) {
+            resetearPreviewPDF();
             document.getElementById('registro-form').reset();
             document.getElementById('reg-id').value = '';
             document.getElementById('modal-titulo').innerText = 'Nuevo Registro';
             document.getElementById('modal').style.display = 'flex';
         }
-
+        
         function cerrarModal() {
             document.getElementById('modal').style.display = 'none';
+            resetearPreviewPDF();
         }
-
+        
         function guardarRegistro(e) {
             e.preventDefault();
             const id = document.getElementById('reg-id').value;
@@ -598,42 +599,117 @@
             const materia = document.getElementById('reg-materia').value;
             const proceso = document.getElementById('reg-proceso').value;
             const titulo = document.getElementById('reg-titulo').value;
-            const modelo = document.getElementById('reg-modelo').value;
-
+            const pdfUrl = document.getElementById('reg-modelo-url').value;
+            
+            if (!titulo || !proceso) {
+                alert("Complete los campos obligatorios (Proceso y Título).");
+                return;
+            }
+            
             if (id) {
                 const index = registros.findIndex(r => r.id == id);
-                registros[index] = { id: parseInt(id), tipo, materia, proceso, titulo, modelo };
+                if (index !== -1) {
+                    registros[index] = { 
+                        ...registros[index],
+                        tipo, materia, proceso, titulo,
+                        modelo: pdfUrl || registros[index].modelo || '' 
+                    };
+                }
             } else {
                 const nuevoId = registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1;
-                registros.unshift({ id: nuevoId, tipo, materia, proceso, titulo, modelo });
+                registros.unshift({ 
+                    id: nuevoId, tipo, materia, proceso, titulo,
+                    modelo: pdfUrl || ''
+                });
             }
-
             cerrarModal();
             renderizarTabla();
         }
-
+        
         function editarRegistro(id) {
             const reg = registros.find(r => r.id == id);
+            if (!reg) return;
             document.getElementById('reg-id').value = reg.id;
             document.getElementById('reg-tipo').value = reg.tipo;
             document.getElementById('reg-materia').value = reg.materia;
             document.getElementById('reg-proceso').value = reg.proceso;
             document.getElementById('reg-titulo').value = reg.titulo;
-            document.getElementById('reg-modelo').value = reg.modelo || '';
+            if (reg.modelo && reg.modelo.trim() !== "") {
+                cargarPreviewDesdeURL(reg.modelo);
+            } else {
+                resetearPreviewPDF();
+            }
             document.getElementById('modal-titulo').innerText = 'Editar Registro';
             document.getElementById('modal').style.display = 'flex';
         }
-
+        
         function eliminarRegistro(id) {
-            if(confirm('¿Está seguro que desea eliminar este registro?')) {
+            if (confirm('¿Eliminar este registro permanentemente? (El PDF seguirá alojado en Cloudinary)')) {
                 registros = registros.filter(r => r.id != id);
+                if (registros.length === 0 && paginaActual > 1) paginaActual = 1;
                 renderizarTabla();
             }
         }
-
-        // Modal de Alerta de Salida
+        
+        // Filtros
+        function filtrarMateria(materia, event) {
+            filtroMateriaActual = materia;
+            paginaActual = 1;
+            document.querySelectorAll('#filtros-materia .filter-item').forEach(el => el.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+            actualizarTituloSeccion();
+            renderizarTabla();
+        }
+        
+        function filtrarTipo(tipo, event) {
+            filtroTipoActual = tipo;
+            paginaActual = 1;
+            document.querySelectorAll('#filtros-tipo .filter-item').forEach(el => el.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+            actualizarTituloSeccion();
+            renderizarTabla();
+        }
+        
+        function actualizarTituloSeccion() {
+            document.getElementById('titulo-seccion').innerText = `Registros (${filtroTipoActual} / Materia: ${filtroMateriaActual})`;
+        }
+        
+        // Navegación
+        function ingresarApp() {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('info-badge')?.classList.add('hidden');
+            renderizarTabla();
+        }
+        
+        function confirmarSalir() {
+            cerrarModalAlerta();
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('landing-page').classList.remove('hidden');
+            iniciarTemporizadorBadge();
+        }
+        
         function abrirModalAlerta() { document.getElementById('modal-alerta').style.display = 'flex'; }
         function cerrarModalAlerta() { document.getElementById('modal-alerta').style.display = 'none'; }
+        
+        // Exposición global de funciones necesarias
+        window.abrirModal = abrirModal;
+        window.cerrarModal = cerrarModal;
+        window.guardarRegistro = guardarRegistro;
+        window.editarRegistro = editarRegistro;
+        window.eliminarRegistro = eliminarRegistro;
+        window.filtrarMateria = filtrarMateria;
+        window.filtrarTipo = filtrarTipo;
+        window.ingresarApp = ingresarApp;
+        window.confirmarSalir = confirmarSalir;
+        window.abrirModalAlerta = abrirModalAlerta;
+        window.cerrarModalAlerta = cerrarModalAlerta;
+        
+        iniciarTemporizadorBadge();
     </script>
+    <!-- NOTA: Para que la subida funcione, debes crear un Upload Preset sin firmar en Cloudinary:
+         Ir a Dashboard → Settings → Upload → Upload presets → Add unsigned preset
+         Nombrarlo exactamente "legal_docs_preset" y permitir tipo de archivo PDF.
+         Esto permite subidas directas desde el frontend usando el truco resource_type: "image". -->
 </body>
 </html>
