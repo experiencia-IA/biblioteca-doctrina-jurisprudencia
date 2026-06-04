@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Biblioteca Jurídica | Móvil con scroll y paginación</title>
+    <title>Biblioteca Jurídica | Filtros colapsables en móvil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDKs -->
@@ -25,7 +25,7 @@
             height: 100vh;
         }
 
-        /* LANDING PAGE (sin cambios) */
+        /* LANDING PAGE */
         #landing-page {
             position: fixed;
             top: 0;
@@ -195,7 +195,7 @@
             gap: 24px;
             flex-wrap: wrap;
         }
-        /* SIDEBAR FILTROS */
+        /* SIDEBAR FILTROS (escritorio) */
         .filters-sidebar {
             width: 300px;
             background: white;
@@ -357,20 +357,54 @@
         }
         .page-btn.active-page { background: #0f2c59; color: white; }
 
-        /* ========== VISTA MÓVIL: TARJETAS con scroll vertical y paginación visible ========== */
+        /* ========== VISTA MÓVIL: FILTROS COLAPSABLES PARA MÁS ESPACIO ========== */
         @media (max-width: 780px) {
             .main-dashboard {
                 flex-direction: column;
                 padding: 12px;
-                gap: 16px;
-                overflow: hidden; /* para que el contenido respete el alto */
+                gap: 12px;
+                overflow: hidden;
             }
+            /* Botón para mostrar/ocultar filtros (solo móvil) */
+            .btn-filtros-movil {
+                background: #0f2c59;
+                color: white;
+                border: none;
+                border-radius: 40px;
+                padding: 10px 18px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                width: fit-content;
+                margin-bottom: 12px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                transition: 0.2s;
+            }
+            .btn-filtros-movil i {
+                font-size: 1rem;
+            }
+            .btn-filtros-movil:active {
+                transform: scale(0.97);
+            }
+            /* Sidebar de filtros: oculto por defecto, se muestra al hacer clic en el botón */
             .filters-sidebar {
                 width: 100%;
-                max-height: 320px;
-                overflow-y: auto;
-                padding: 16px;
-                flex-shrink: 0;
+                max-height: 0;
+                padding: 0 16px;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, padding 0.2s ease, margin 0.2s;
+                margin-bottom: 0;
+                background: white;
+                border-radius: 28px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            }
+            .filters-sidebar.open {
+                max-height: 600px; /* suficiente para todo el contenido */
+                padding: 20px 16px;
+                margin-bottom: 16px;
             }
             .materias-list {
                 flex-direction: row;
@@ -385,14 +419,15 @@
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
+                flex: 1;
             }
             .table-wrapper {
                 flex: 1;
-                overflow-y: auto;   /* scroll vertical para las tarjetas */
+                overflow-y: auto;
                 padding: 0 12px;
                 -webkit-overflow-scrolling: touch;
             }
-            /* Ocultamos la tabla clásica y mostramos contenedor de tarjetas */
+            /* Ocultamos la tabla clásica y mostramos tarjetas */
             .data-table {
                 display: none;
             }
@@ -478,7 +513,6 @@
                 border-radius: 50%;
                 cursor: pointer;
             }
-            /* Barra de paginación siempre visible abajo */
             .pagination-bar {
                 flex-shrink: 0;
                 background: white;
@@ -501,10 +535,16 @@
             }
         }
 
-        /* En escritorio, ocultamos el contenedor de tarjetas */
+        /* En escritorio, el botón de filtros no se muestra y el sidebar siempre visible */
         @media (min-width: 781px) {
+            .btn-filtros-movil {
+                display: none;
+            }
             .cards-container {
                 display: none;
+            }
+            .filters-sidebar {
+                display: block;
             }
         }
 
@@ -609,9 +649,9 @@
             cursor: pointer;
         }
 
-        /* ESTILOS IMPRESIÓN: título, fecha DD/MM/AAAA y sin columna acciones */
+        /* IMPRESIÓN: título, fecha y sin columna acciones */
         @media print {
-            .app-header, .filters-sidebar, .pagination-bar, .header-actions, .btn-nuevo, .btn-imprimir, .btn-logout, .user-badge, .modal-overlay, #landing-page, .toast-notify, .alert-modal {
+            .app-header, .filters-sidebar, .pagination-bar, .header-actions, .btn-nuevo, .btn-imprimir, .btn-logout, .user-badge, .modal-overlay, #landing-page, .toast-notify, .alert-modal, .btn-filtros-movil {
                 display: none !important;
             }
             .cards-container { display: none !important; }
@@ -676,7 +716,11 @@
         </div>
     </div>
     <div class="main-dashboard">
-        <div class="filters-sidebar">
+        <!-- Botón para mostrar/ocultar filtros (solo móvil) -->
+        <button id="toggleFiltersBtn" class="btn-filtros-movil"><i class="fas fa-sliders-h"></i> Mostrar filtros</button>
+        
+        <!-- Sidebar de filtros (se colapsa en móvil) -->
+        <div class="filters-sidebar" id="filtersSidebar">
             <div class="filter-group">
                 <label><i class="fas fa-search"></i> Búsqueda por texto</label>
                 <input type="text" id="textoBusqueda" class="search-input" placeholder="Título o detalle...">
@@ -695,6 +739,7 @@
                 <button id="btnLimpiarMaterias" class="btn-limpiar"><i class="fas fa-eraser"></i> Limpiar filtros</button>
             </div>
         </div>
+
         <div class="content-panel">
             <div class="print-header" style="display: none;">
                 <h1>Biblioteca de Doctrina y Jurisprudencia</h1>
@@ -780,6 +825,19 @@
     const authTabs = document.querySelectorAll(".auth-tab"), loginFormDiv = document.getElementById("loginForm"), registerFormDiv = document.getElementById("registerForm");
     const materiasLista = ["Administrativo", "Civil y Comercial", "Laboral", "Familia", "Violencia Familiar", "Fiscal y Tributario"];
 
+    // Lógica para colapsar filtros en móvil
+    const toggleBtn = document.getElementById("toggleFiltersBtn");
+    const filtersSidebar = document.getElementById("filtersSidebar");
+    if (toggleBtn && filtersSidebar) {
+        toggleBtn.addEventListener("click", () => {
+            filtersSidebar.classList.toggle("open");
+            const isOpen = filtersSidebar.classList.contains("open");
+            toggleBtn.innerHTML = isOpen ? '<i class="fas fa-times"></i> Ocultar filtros' : '<i class="fas fa-sliders-h"></i> Mostrar filtros';
+        });
+        // Por defecto en móvil, los filtros están cerrados para dar espacio a las tarjetas
+        // Solo se abren si el usuario toca el botón
+    }
+
     function renderMateriasChips() {
         materiasContainer.innerHTML = "";
         materiasLista.forEach(mat => {
@@ -832,7 +890,6 @@
                 </div>
             `;
         }).join('');
-        // Eventos editar/eliminar en cards
         document.querySelectorAll("[data-action='edit-card']").forEach(el => {
             el.addEventListener("click", (e) => { const id = el.getAttribute("data-id"); openEditModal(id); });
         });
@@ -857,7 +914,6 @@
         const pageDocs = filteredDocs.slice(start, start+10);
         const isLogged = !!currentUser;
         
-        // Renderizar tabla (escritorio)
         if (pageDocs.length === 0 && total === 0) {
             tbodyTable.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay documentos. Crea uno nuevo.</td></tr>`;
         } else {
@@ -880,10 +936,8 @@
                 document.querySelectorAll("[data-action='delete']").forEach(el => { el.addEventListener("click", async () => { const id = el.getAttribute("data-id"); if(confirm("Eliminar?")){ await bibliotecaRef.doc(id).delete(); showToast("Eliminado","#c62828"); } }); });
             }
         }
-        // Renderizar tarjetas (móvil)
         renderCards(pageDocs, isLogged);
         
-        // Paginación
         paginationDiv.innerHTML = "";
         if(totalPages <= 1) { paginationDiv.innerHTML = "<span>Única</span>"; return; }
         for(let i=1; i<=Math.min(totalPages,7); i++) {
@@ -897,7 +951,6 @@
     }
 
     function applyFiltersAndRender() { applyFilters(); }
-
     function loadDocuments() {
         bibliotecaRef.onSnapshot(snapshot => {
             allDocuments = [];
@@ -908,14 +961,12 @@
             applyFiltersAndRender();
         });
     }
-
     function showToast(text, bg="#2e7d32") {
         successToast.style.background = bg;
         successToast.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
         successToast.classList.add("show");
         setTimeout(() => successToast.classList.remove("show"), 2500);
     }
-
     async function saveDocument(editingId = null) {
         const titulo = document.getElementById("docTitulo").value.trim();
         const tipo = document.getElementById("docTipo").value;
@@ -940,7 +991,6 @@
             showToast(editingId ? "Actualizado" : "Documento registrado");
         } catch(e) { uploadStatusDiv.innerText = "Error: "+e.message; }
     }
-
     function openEditModal(id) {
         const doc = allDocuments.find(d => d.id === id);
         if(!doc) return;
@@ -954,7 +1004,6 @@
         document.getElementById("wordFile").value = "";
         modalDoc.classList.add("active");
     }
-
     function resetModalForm() {
         editingDocId = null;
         document.getElementById("modalTitle").innerHTML = "<i class='fas fa-upload'></i> Nuevo documento";
@@ -964,7 +1013,6 @@
         document.getElementById("wordFile").value = "";
         uploadStatusDiv.innerText = "";
     }
-
     function enterApp() {
         if (landing.classList.contains('hidden')) return;
         landing.classList.add("hidden");
@@ -973,7 +1021,6 @@
         renderMateriasChips();
         updatePrintDate();
     }
-
     function updateUIForUser(user) {
         currentUser = user;
         if(user) {
@@ -986,7 +1033,7 @@
     }
     auth.onAuthStateChanged(user => updateUIForUser(user));
 
-    // Event listeners
+    // Event listeners (igual que antes)
     doLoginBtn.addEventListener("click", async () => {
         const email = document.getElementById("loginEmail").value, pwd = document.getElementById("loginPassword").value;
         try { await auth.signInWithEmailAndPassword(email, pwd); authModal.classList.remove("active"); authErrorSpan.innerText = ""; showToast("Sesión iniciada"); } catch(e) { authErrorSpan.innerText = "Error: "+e.message; }
