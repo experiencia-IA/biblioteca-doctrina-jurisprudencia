@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Biblioteca de Doctrina y Jurisprudencia 6</title>
+    <title>Biblioteca Jurídica | Vista Móvil Mejorada</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDKs -->
@@ -193,7 +193,7 @@
             gap: 24px;
             flex-wrap: wrap;
         }
-        /* SIDEBAR VERTICAL RESPONSIVE */
+        /* SIDEBAR FILTROS */
         .filters-sidebar {
             width: 300px;
             background: white;
@@ -272,7 +272,7 @@
             width: 100%;
             cursor: pointer;
         }
-        /* CONTENIDO TABLA */
+        /* CONTENIDO: tabla (escritorio) y cards (móvil) */
         .content-panel {
             flex: 1;
             background: white;
@@ -287,6 +287,7 @@
             overflow-x: auto;
             padding: 0 20px;
         }
+        /* Tabla tradicional (escritorio) */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -352,6 +353,140 @@
             min-width: 40px;
         }
         .page-btn.active-page { background: #0f2c59; color: white; }
+
+        /* ========== VISTA MÓVIL: TARJETAS VERTICALES CON TODOS LOS DATOS ========== */
+        @media (max-width: 780px) {
+            .main-dashboard {
+                flex-direction: column;
+                padding: 12px;
+                gap: 16px;
+            }
+            .filters-sidebar {
+                width: 100%;
+                max-height: 360px;
+                padding: 16px;
+            }
+            .materias-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-height: none;
+            }
+            .materia-chip {
+                flex: 0 0 auto;
+                padding: 8px 18px;
+            }
+            .table-wrapper {
+                padding: 0 12px;
+                overflow-x: visible;
+            }
+            /* Ocultamos la tabla clásica y mostramos contenedor de tarjetas */
+            .data-table {
+                display: none;
+            }
+            .cards-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .doc-card {
+                background: white;
+                border-radius: 28px;
+                border: 1px solid #e2edf2;
+                padding: 18px;
+                box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+                transition: all 0.1s;
+            }
+            .doc-card h4 {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #0f2c59;
+                margin-bottom: 12px;
+                word-break: break-word;
+            }
+            .doc-card .meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 16px;
+                font-size: 0.75rem;
+            }
+            .doc-card .badge-tipo {
+                background: #e9eef3;
+                padding: 4px 12px;
+                border-radius: 40px;
+            }
+            .doc-card .materia-label {
+                background: #eef2ff;
+                padding: 4px 12px;
+                border-radius: 40px;
+                color: #1e3a8a;
+            }
+            .doc-card .doc-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                margin: 16px 0;
+                border-top: 1px solid #eef2f8;
+                padding-top: 16px;
+            }
+            .doc-card .doc-link-btn {
+                background: #f1f5f9;
+                padding: 10px 18px;
+                border-radius: 40px;
+                text-decoration: none;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                color: #0f2c59;
+                flex: 1 0 auto;
+                justify-content: center;
+            }
+            .doc-card .doc-link-btn i {
+                font-size: 1.2rem;
+            }
+            .doc-card .doc-date {
+                font-size: 0.7rem;
+                color: #5a6e7c;
+                margin-top: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .doc-card .card-actions {
+                display: flex;
+                gap: 20px;
+                justify-content: flex-end;
+                margin-top: 12px;
+            }
+            .doc-card .card-actions i {
+                font-size: 1.4rem;
+                padding: 8px;
+                background: #f1f5f9;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+            .header-actions, .app-header {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .btn-nuevo, .btn-imprimir, .user-badge, .btn-logout {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .pagination-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* En escritorio, ocultamos el contenedor de tarjetas */
+        @media (min-width: 781px) {
+            .cards-container {
+                display: none;
+            }
+        }
 
         /* MODALES */
         .modal-overlay {
@@ -454,264 +589,21 @@
             cursor: pointer;
         }
 
-        /* ========== MEJORAS RESPONSIVAS: MÓVIL (manteniendo escritorio intacto) ========== */
-        @media (max-width: 780px) {
-            .main-dashboard {
-                flex-direction: column;
-                padding: 16px;
-                gap: 18px;
-            }
-            .filters-sidebar {
-                width: 100%;
-                max-height: 380px;
-                overflow-y: auto;
-                padding: 20px 18px;
-            }
-            .materias-list {
-                flex-direction: row;
-                flex-wrap: wrap;
-                max-height: none;
-                gap: 10px;
-            }
-            .materia-chip {
-                flex: 0 0 auto;
-                padding: 8px 18px;
-                font-size: 0.8rem;
-                background: #f1f5f9;
-            }
-            .tipo-buttons {
-                flex-wrap: wrap;
-            }
-            .tipo-btn {
-                flex: 1 1 auto;
-                padding: 10px 6px;
-                font-size: 0.85rem;
-            }
-            .content-panel {
-                border-radius: 24px;
-                overflow-x: auto;
-            }
-            .table-wrapper {
-                padding: 0 12px;
-                overflow-x: auto;
-            }
-            .data-table {
-                min-width: 560px;
-                font-size: 0.8rem;
-            }
-            .data-table th, .data-table td {
-                padding: 12px 8px;
-            }
-            .action-icons i {
-                font-size: 1.2rem;
-                margin: 0 3px;
-                padding: 4px;
-            }
-            .app-header {
-                padding: 12px 16px;
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .logo-area {
-                text-align: center;
-            }
-            .header-actions {
-                justify-content: center;
-                gap: 10px;
-            }
-            .btn-nuevo, .btn-imprimir, .user-badge, .btn-logout {
-                padding: 8px 14px;
-                font-size: 0.8rem;
-            }
-            .pagination-bar {
-                flex-direction: column;
-                align-items: center;
-                padding: 14px;
-            }
-            .pages {
-                justify-content: center;
-            }
-            .page-btn {
-                padding: 6px 12px;
-                min-width: 38px;
-            }
-            .modal-content {
-                width: 92%;
-                padding: 20px;
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-            .hero-card {
-                padding: 32px 20px;
-                width: 92%;
-            }
-            #landing-page h1 {
-                font-size: 2rem;
-            }
-            #landing-page h2 {
-                font-size: 1rem;
-            }
-            .btn-group {
-                flex-direction: column;
-                gap: 14px;
-            }
-            .btn-primary, .btn-outline {
-                width: 100%;
-                justify-content: center;
-            }
-            .filter-group label {
-                font-size: 0.85rem;
-            }
-            .search-input {
-                font-size: 0.9rem;
-                padding: 12px 14px;
-            }
-            .btn-limpiar {
-                padding: 10px;
-                font-size: 0.85rem;
-            }
-            .badge-tipo {
-                display: inline-block;
-                margin-top: 4px;
-            }
-            .link-icon {
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Ajustes adicionales para pantallas muy pequeñas (≤480px) */
-        @media (max-width: 480px) {
-            .filters-sidebar {
-                max-height: 420px;
-                padding: 16px;
-            }
-            .materia-chip {
-                padding: 6px 14px;
-                font-size: 0.75rem;
-            }
-            .hero-card h1 {
-                font-size: 1.7rem;
-            }
-            .modal-content {
-                padding: 18px;
-            }
-            .modal-content input, .modal-content select {
-                padding: 10px;
-                margin: 6px 0 14px;
-            }
-            .btn-primary, .btn-outline {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-            .data-table td, .data-table th {
-                font-size: 0.75rem;
-            }
-            .action-icons i {
-                font-size: 1.1rem;
-            }
-            .toast-notify, .alert-modal {
-                bottom: 20px;
-                right: 16px;
-                left: 16px;
-                max-width: calc(100% - 32px);
-                padding: 12px 18px;
-                font-size: 0.85rem;
-            }
-            .header-actions {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .user-badge {
-                font-size: 0.75rem;
-            }
-            .btn-nuevo, .btn-imprimir {
-                font-size: 0.75rem;
-            }
-        }
-
-        /* ESTILOS ESPECÍFICOS PARA IMPRESIÓN (intacto) */
+        /* ESTILOS IMPRESIÓN (mantener tabla) */
         @media print {
-            .app-header,
-            .filters-sidebar,
-            .pagination-bar,
-            .header-actions,
-            .btn-nuevo,
-            .btn-imprimir,
-            .btn-logout,
-            .user-badge,
-            .modal-overlay,
-            #landing-page,
-            .toast-notify,
-            .alert-modal {
+            .app-header, .filters-sidebar, .pagination-bar, .header-actions, .btn-nuevo, .btn-imprimir, .btn-logout, .user-badge, .modal-overlay, #landing-page, .toast-notify, .alert-modal {
                 display: none !important;
             }
-
-            #app-container,
-            .main-dashboard,
-            .content-panel,
-            .table-wrapper {
+            .cards-container { display: none !important; }
+            .data-table { display: table !important; }
+            #app-container, .main-dashboard, .content-panel, .table-wrapper {
                 display: block !important;
                 width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                overflow: visible !important;
-            }
-
-            body {
-                background: white;
-                margin: 1.5cm;
-                padding: 0;
-                font-size: 12pt;
-            }
-
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #0f2c59;
-                padding-bottom: 10px;
-            }
-            .print-header h1 {
-                font-size: 18pt;
-                color: #0f2c59;
                 margin: 0;
-            }
-            .print-header p {
-                font-size: 11pt;
-                color: #2c4c7a;
-                margin: 5px 0 0;
-            }
-
-            .data-table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 10pt;
-            }
-            .data-table th,
-            .data-table td {
-                border: 1px solid #aaa;
-                padding: 8px;
-                text-align: left;
-            }
-            .data-table th {
-                background: #f0f0f0;
-                font-weight: bold;
-            }
-            .data-table th:last-child,
-            .data-table td:last-child {
-                display: none;
-            }
-            .link-icon {
-                text-decoration: none;
-                color: black;
-            }
-            .badge-tipo {
-                background: none;
-                border: none;
                 padding: 0;
+            }
+            .data-table th, .data-table td {
+                border: 1px solid #aaa;
             }
         }
     </style>
@@ -727,7 +619,6 @@
             <button class="btn-primary" id="btn-ingresar"><i class="fas fa-book-open"></i> Ingresar ahora</button>
             <button class="btn-outline" id="btn-iniciar-sesion"><i class="fas fa-key"></i> Iniciar Sesión</button>
         </div>
-        <div style="margin-top: 40px; font-size: 0.8rem; color:#6c7a89;"></div>
     </div>
 </div>
 
@@ -740,7 +631,7 @@
         </div>
         <div class="header-actions">
             <span id="userStatusBadge" class="user-badge"><i class="fas fa-user"></i> Invitado</span>
-            <button class="btn-imprimir" id="btnImprimirTabla"><i class="fas fa-print"></i> Imprimir tabla</button>
+            <button class="btn-imprimir" id="btnImprimirTabla"><i class="fas fa-print"></i> Imprimir</button>
             <button class="btn-nuevo" id="btn-abrir-modal"><i class="fas fa-plus-circle"></i> Nuevo doc</button>
             <button class="btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Salir</button>
         </div>
@@ -766,19 +657,19 @@
             </div>
         </div>
         <div class="content-panel">
-            <!-- Encabezado que solo se muestra en impresión -->
             <div class="print-header" style="display: none;">
                 <h1>Biblioteca de Doctrina y Jurisprudencia</h1>
                 <p>Defensoría Civil y Comercial N° 6 · Ministerio Público</p>
-                <p>Fecha de impresión: <span id="printDateSpan"></span></p>
+                <p>Fecha: <span id="printDateSpan"></span></p>
             </div>
             <div class="table-wrapper">
+                <!-- Tabla tradicional (escritorio) -->
                 <table class="data-table">
-                    <thead>
-                        <tr><th>Detalle del Documento</th><th>PDF</th><th>Word modelo</th><th>Fecha registro</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody id="tbodyResultados"><tr><td colspan="5">Cargando...</td></tr>
+                    <thead><tr><th>Detalle del Documento</th><th>PDF</th><th>Word modelo</th><th>Fecha registro</th><th>Acciones</th></tr></thead>
+                    <tbody id="tbodyResultados"><tr><td colspan="5">Cargando...</td></tr></tbody>
                 </table>
+                <!-- Contenedor de tarjetas (móvil) -->
+                <div id="cardsContainer" class="cards-container"></div>
             </div>
             <div class="pagination-bar">
                 <div class="info-total" id="totalRegistrosInfo">Total: 0 registros</div>
@@ -788,65 +679,16 @@
     </div>
 </div>
 
-<!-- MODAL AUTENTICACIÓN -->
-<div id="authModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-auth="login">Iniciar Sesión</button>
-            <button class="auth-tab" data-auth="register">Registrarse</button>
-        </div>
-        <div id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Correo electrónico">
-            <input type="password" id="loginPassword" placeholder="Contraseña">
-            <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end; margin-top:12px;">
-                <button class="btn-outline" id="closeAuthModal">Cancelar</button>
-                <button class="btn-primary" id="doLogin">Acceder</button>
-            </div>
-        </div>
-        <div id="registerForm" style="display:none;">
-            <input type="email" id="regEmail" placeholder="Correo electrónico">
-            <input type="password" id="regPassword" placeholder="Contraseña (mínimo 6 caracteres)">
-            <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end; margin-top:12px;">
-                <button class="btn-outline" id="closeAuthModalReg">Cancelar</button>
-                <button class="btn-primary" id="doRegister">Registrarse</button>
-            </div>
-        </div>
-        <div id="authError" style="color:red; font-size:12px; margin-top:12px; text-align:center;"></div>
-    </div>
-</div>
+<!-- MODALES (autenticación y documento) -->
+<div id="authModal" class="modal-overlay"><div class="modal-content"><div class="auth-tabs"><button class="auth-tab active" data-auth="login">Iniciar Sesión</button><button class="auth-tab" data-auth="register">Registrarse</button></div><div id="loginForm"><input type="email" id="loginEmail" placeholder="Correo electrónico"><input type="password" id="loginPassword" placeholder="Contraseña"><div class="modal-actions"><button class="btn-outline" id="closeAuthModal">Cancelar</button><button class="btn-primary" id="doLogin">Acceder</button></div></div><div id="registerForm" style="display:none;"><input type="email" id="regEmail" placeholder="Correo electrónico"><input type="password" id="regPassword" placeholder="Contraseña (mínimo 6)"><div class="modal-actions"><button class="btn-outline" id="closeAuthModalReg">Cancelar</button><button class="btn-primary" id="doRegister">Registrarse</button></div></div><div id="authError" style="color:red; font-size:12px; margin-top:12px; text-align:center;"></div></div></div>
 
-<!-- MODAL DOCUMENTO -->
-<div id="modalDocumento" class="modal-overlay">
-    <div class="modal-content">
-        <h3 id="modalTitle"><i class="fas fa-upload"></i> Nuevo documento</h3>
-        <input type="text" id="docTitulo" placeholder="Título / Detalle del documento *">
-        <select id="docTipo"><option value="doctrina">Doctrina</option><option value="jurisprudencia">Jurisprudencia</option></select>
-        <select id="docMateria">
-            <option>Administrativo</option><option>Civil y Comercial</option><option>Laboral</option>
-            <option>Familia</option><option>Violencia Familiar</option><option>Fiscal y Tributario</option>
-        </select>
-        <label>Archivo PDF (subir a Cloudinary)</label>
-        <input type="file" id="pdfFile" accept=".pdf">
-        <label>Word modelo (URL o subir archivo)</label>
-        <input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx">
-        <input type="file" id="wordFile" accept=".doc,.docx">
-        <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end; margin-top:16px;">
-            <button class="btn-outline" id="btnCancelarModal">Cancelar</button>
-            <button class="btn-primary" id="btnGuardarDocumento">Guardar</button>
-        </div>
-        <div id="uploadStatus" style="margin-top:12px; font-size:13px;"></div>
-    </div>
-</div>
+<div id="modalDocumento" class="modal-overlay"><div class="modal-content"><h3 id="modalTitle"><i class="fas fa-upload"></i> Nuevo documento</h3><input type="text" id="docTitulo" placeholder="Título / Detalle del documento *"><select id="docTipo"><option value="doctrina">Doctrina</option><option value="jurisprudencia">Jurisprudencia</option></select><select id="docMateria"><option>Administrativo</option><option>Civil y Comercial</option><option>Laboral</option><option>Familia</option><option>Violencia Familiar</option><option>Fiscal y Tributario</option></select><label>Archivo PDF (subir a Cloudinary)</label><input type="file" id="pdfFile" accept=".pdf"><label>Word modelo (URL o subir archivo)</label><input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx"><input type="file" id="wordFile" accept=".doc,.docx"><div class="modal-actions"><button class="btn-outline" id="btnCancelarModal">Cancelar</button><button class="btn-primary" id="btnGuardarDocumento">Guardar</button></div><div id="uploadStatus" style="margin-top:12px; font-size:13px;"></div></div></div>
 
 <div id="successToast" class="toast-notify"><i class="fas fa-check-circle"></i> Operación exitosa</div>
-<div id="logoutAlert" class="alert-modal">
-    <span><i class="fas fa-sign-out-alt"></i> ¿Cerrar sesión?</span>
-    <button id="confirmLogout">Sí, salir</button>
-    <button id="cancelLogout">Cancelar</button>
-</div>
+<div id="logoutAlert" class="alert-modal"><span><i class="fas fa-sign-out-alt"></i> ¿Cerrar sesión?</span><button id="confirmLogout">Sí, salir</button><button id="cancelLogout">Cancelar</button></div>
 
 <script>
-    // Firebase Config
+    // Configuración Firebase (misma que usaste)
     const firebaseConfig = {
         apiKey: "AIzaSyDtbeCpZ6ydLo5IhElIIQUHYXV6D1GVHgo",
         authDomain: "biblioteca-doc-juris.firebaseapp.com",
@@ -859,87 +701,44 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
     const bibliotecaRef = db.collection("biblioteca");
-
-    // Cloudinary
     const CLOUD_NAME = "dbdgpfn9g";
     const UPLOAD_PRESET = "unsigned_biblioteca";
 
     async function subirArchivoCloudinary(file) {
         if (!file) return null;
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", UPLOAD_PRESET);
-        const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, { method: "POST", body: formData });
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("upload_preset", UPLOAD_PRESET);
+        const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, { method: "POST", body: fd });
         const data = await resp.json();
         if (data.secure_url) return data.secure_url;
-        throw new Error(data.error?.message || "Error subiendo archivo");
+        throw new Error(data.error?.message || "Error al subir");
     }
 
     function formatDateToDDMMYYYY(date) {
         if (!date) return "—";
-        let d;
-        if (date.toDate && typeof date.toDate === 'function') {
-            d = date.toDate();
-        } else if (date instanceof Date) {
-            d = date;
-        } else if (typeof date === 'string') {
-            d = new Date(date);
-        } else {
-            return "—";
-        }
-        if (isNaN(d.getTime())) return "—";
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        return `${day}/${month}/${year}`;
+        let d = date.toDate ? date.toDate() : date;
+        if (!(d instanceof Date) || isNaN(d.getTime())) return "—";
+        return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
     }
 
     function updatePrintDate() {
-        const printSpan = document.getElementById("printDateSpan");
-        if (printSpan) {
-            printSpan.textContent = formatDateToDDMMYYYY(new Date());
-        }
+        const span = document.getElementById("printDateSpan");
+        if (span) span.textContent = formatDateToDDMMYYYY(new Date());
     }
 
-    let allDocuments = [];
-    let filteredDocs = [];
-    let currentPage = 1;
-    let currentSearchText = "";
-    let currentTipo = "todos";
-    let selectedMaterias = new Set();
-    let currentUser = null;
-    let editingDocId = null;
-
-    const landing = document.getElementById("landing-page");
-    const appContainer = document.getElementById("app-container");
-    const tbody = document.getElementById("tbodyResultados");
-    const totalInfo = document.getElementById("totalRegistrosInfo");
-    const paginationDiv = document.getElementById("paginationControls");
-    const searchInput = document.getElementById("textoBusqueda");
-    const tipoBtns = document.querySelectorAll(".tipo-btn");
-    const materiasContainer = document.getElementById("materiasContainer");
-    const limpiarBtn = document.getElementById("btnLimpiarMaterias");
-    const modalDoc = document.getElementById("modalDocumento");
-    const cancelModal = document.getElementById("btnCancelarModal");
-    const guardarDocBtn = document.getElementById("btnGuardarDocumento");
-    const uploadStatusDiv = document.getElementById("uploadStatus");
-    const userBadge = document.getElementById("userStatusBadge");
-    const btnLogout = document.getElementById("btnLogout");
-    const authModal = document.getElementById("authModal");
-    const closeAuthModal = document.getElementById("closeAuthModal");
-    const closeAuthModalReg = document.getElementById("closeAuthModalReg");
-    const doLoginBtn = document.getElementById("doLogin");
-    const doRegisterBtn = document.getElementById("doRegister");
-    const authErrorSpan = document.getElementById("authError");
-    const btnImprimir = document.getElementById("btnImprimirTabla");
-    const successToast = document.getElementById("successToast");
-    const logoutAlert = document.getElementById("logoutAlert");
-    const confirmLogoutBtn = document.getElementById("confirmLogout");
-    const cancelLogoutBtn = document.getElementById("cancelLogout");
-    const authTabs = document.querySelectorAll(".auth-tab");
-    const loginFormDiv = document.getElementById("loginForm");
-    const registerFormDiv = document.getElementById("registerForm");
-
+    let allDocuments = [], filteredDocs = [], currentPage = 1, currentSearchText = "", currentTipo = "todos", selectedMaterias = new Set(), currentUser = null, editingDocId = null;
+    const landing = document.getElementById("landing-page"), appContainer = document.getElementById("app-container");
+    const tbodyTable = document.getElementById("tbodyResultados");
+    const cardsContainer = document.getElementById("cardsContainer");
+    const totalInfo = document.getElementById("totalRegistrosInfo"), paginationDiv = document.getElementById("paginationControls");
+    const searchInput = document.getElementById("textoBusqueda"), tipoBtns = document.querySelectorAll(".tipo-btn");
+    const materiasContainer = document.getElementById("materiasContainer"), limpiarBtn = document.getElementById("btnLimpiarMaterias");
+    const modalDoc = document.getElementById("modalDocumento"), cancelModal = document.getElementById("btnCancelarModal"), guardarDocBtn = document.getElementById("btnGuardarDocumento"), uploadStatusDiv = document.getElementById("uploadStatus");
+    const userBadge = document.getElementById("userStatusBadge"), btnLogout = document.getElementById("btnLogout");
+    const authModal = document.getElementById("authModal"), doLoginBtn = document.getElementById("doLogin"), doRegisterBtn = document.getElementById("doRegister"), authErrorSpan = document.getElementById("authError");
+    const btnImprimir = document.getElementById("btnImprimirTabla"), successToast = document.getElementById("successToast"), logoutAlert = document.getElementById("logoutAlert"), confirmLogoutBtn = document.getElementById("confirmLogout"), cancelLogoutBtn = document.getElementById("cancelLogout");
+    const authTabs = document.querySelectorAll(".auth-tab"), loginFormDiv = document.getElementById("loginForm"), registerFormDiv = document.getElementById("registerForm");
     const materiasLista = ["Administrativo", "Civil y Comercial", "Laboral", "Familia", "Violencia Familiar", "Fiscal y Tributario"];
 
     function renderMateriasChips() {
@@ -972,6 +771,41 @@
         renderTableAndPagination();
     }
 
+    function renderCards(docs, isLogged) {
+        if (!cardsContainer) return;
+        cardsContainer.innerHTML = docs.map(doc => {
+            const fecha = doc.fechaRegistro ? formatDateToDDMMYYYY(doc.fechaRegistro) : "—";
+            const tipoLabel = doc.tipo === 'doctrina' ? 'Doctrina' : 'Jurisprudencia';
+            const pdfHtml = doc.pdfUrl ? `<a href="${doc.pdfUrl}" target="_blank" rel="noopener" class="doc-link-btn"><i class="fas fa-file-pdf"></i> Ver PDF</a>` : `<span class="doc-link-btn" style="background:#eee; color:#999;"><i class="fas fa-file-pdf"></i> Sin PDF</span>`;
+            const wordHtml = doc.wordUrl ? `<a href="${doc.wordUrl}" target="_blank" rel="noopener" class="doc-link-btn"><i class="fas fa-file-word"></i> Descargar Word</a>` : `<span class="doc-link-btn" style="background:#eee; color:#999;"><i class="fas fa-file-word"></i> Sin Word</span>`;
+            const editIcon = `<i class="fas fa-edit" data-id="${doc.id}" data-action="edit-card"></i>`;
+            const deleteIcon = isLogged ? `<i class="fas fa-trash-alt" data-id="${doc.id}" data-action="delete-card"></i>` : '';
+            return `
+                <div class="doc-card" data-doc-id="${doc.id}">
+                    <h4>${escapeHtml(doc.titulo)}</h4>
+                    <div class="meta"><span class="badge-tipo">${tipoLabel}</span><span class="materia-label">${doc.materia}</span></div>
+                    <div class="doc-links">${pdfHtml} ${wordHtml}</div>
+                    <div class="doc-date"><span>📅 ${fecha}</span><div class="card-actions">${editIcon} ${deleteIcon}</div></div>
+                </div>
+            `;
+        }).join('');
+        // Eventos editar/eliminar en cards
+        document.querySelectorAll("[data-action='edit-card']").forEach(el => {
+            el.addEventListener("click", (e) => { const id = el.getAttribute("data-id"); openEditModal(id); });
+        });
+        if (isLogged) {
+            document.querySelectorAll("[data-action='delete-card']").forEach(el => {
+                el.addEventListener("click", async (e) => {
+                    const id = el.getAttribute("data-id");
+                    if (confirm("¿Eliminar permanentemente?")) {
+                        await bibliotecaRef.doc(id).delete();
+                        showToast("Documento eliminado", "#c62828");
+                    }
+                });
+            });
+        }
+    }
+
     function renderTableAndPagination() {
         const total = filteredDocs.length;
         totalInfo.innerText = `Total: ${total} registros`;
@@ -980,10 +814,11 @@
         const pageDocs = filteredDocs.slice(start, start+10);
         const isLogged = !!currentUser;
         
-        if (pageDocs.length === 0 && total===0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay documentos. Crea uno nuevo.</td></tr>`;
+        // Renderizar tabla (escritorio)
+        if (pageDocs.length === 0 && total === 0) {
+            tbodyTable.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay documentos. Crea uno nuevo.</td></tr>`;
         } else {
-            tbody.innerHTML = pageDocs.map(doc => {
+            tbodyTable.innerHTML = pageDocs.map(doc => {
                 const fecha = doc.fechaRegistro ? formatDateToDDMMYYYY(doc.fechaRegistro) : "—";
                 const tipoLabel = doc.tipo === 'doctrina' ? 'Doctrina' : 'Jurisprudencia';
                 const editIcon = `<i class="fas fa-edit" data-id="${doc.id}" data-action="edit"></i>`;
@@ -997,27 +832,23 @@
                     <td>${actions}</td>
                 </tr>`;
             }).join('');
-            document.querySelectorAll("[data-action='edit']").forEach(el => {
-                el.addEventListener("click", (e) => { const id = el.getAttribute("data-id"); openEditModal(id); });
-            });
-            if(isLogged) {
-                document.querySelectorAll("[data-action='delete']").forEach(el => {
-                    el.addEventListener("click", async (e) => { 
-                        const id = el.getAttribute("data-id"); 
-                        if(confirm("¿Eliminar permanentemente este documento?")) {
-                            await bibliotecaRef.doc(id).delete(); 
-                            showToast("Documento eliminado", "#c62828");
-                        }
-                    });
-                });
+            document.querySelectorAll("[data-action='edit']").forEach(el => { el.addEventListener("click", (e) => { const id = el.getAttribute("data-id"); openEditModal(id); }); });
+            if(isLogged){
+                document.querySelectorAll("[data-action='delete']").forEach(el => { el.addEventListener("click", async () => { const id = el.getAttribute("data-id"); if(confirm("Eliminar?")){ await bibliotecaRef.doc(id).delete(); showToast("Eliminado","#c62828"); } }); });
             }
         }
+        // Renderizar tarjetas (móvil)
+        renderCards(pageDocs, isLogged);
+        
+        // Paginación
         paginationDiv.innerHTML = "";
-        if(totalPages<=1) { paginationDiv.innerHTML = "<span>Única</span>"; return; }
+        if(totalPages <= 1) { paginationDiv.innerHTML = "<span>Única</span>"; return; }
         for(let i=1; i<=Math.min(totalPages,7); i++) {
-            const btn = document.createElement("button"); btn.textContent=i; btn.classList.add("page-btn"); 
-            if(i===currentPage) btn.classList.add("active-page");
-            btn.addEventListener("click", () => { currentPage=i; renderTableAndPagination(); });
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.classList.add("page-btn");
+            if(i === currentPage) btn.classList.add("active-page");
+            btn.addEventListener("click", () => { currentPage = i; renderTableAndPagination(); });
             paginationDiv.appendChild(btn);
         }
     }
@@ -1051,8 +882,7 @@
         const wordFile = document.getElementById("wordFile").files[0];
         if(!titulo) return alert("Título obligatorio");
         if(!editingId && !pdfFile) return alert("Debe seleccionar PDF para nuevo documento");
-
-        uploadStatusDiv.innerText = "Subiendo archivos...";
+        uploadStatusDiv.innerText = "Subiendo...";
         let pdfUrlFinal = null, wordUrlFinal = wordUrlManual || null;
         try {
             if(pdfFile) pdfUrlFinal = await subirArchivoCloudinary(pdfFile);
@@ -1064,7 +894,7 @@
             uploadStatusDiv.innerText = "";
             modalDoc.classList.remove("active");
             resetModalForm();
-            showToast(editingId ? "Documento actualizado" : "Documento registrado", "#2e7d32");
+            showToast(editingId ? "Actualizado" : "Documento registrado");
         } catch(e) { uploadStatusDiv.innerText = "Error: "+e.message; }
     }
 
@@ -1081,6 +911,7 @@
         document.getElementById("wordFile").value = "";
         modalDoc.classList.add("active");
     }
+
     function resetModalForm() {
         editingDocId = null;
         document.getElementById("modalTitle").innerHTML = "<i class='fas fa-upload'></i> Nuevo documento";
@@ -1104,47 +935,32 @@
         currentUser = user;
         if(user) {
             userBadge.innerHTML = `<i class="fas fa-user-check"></i> ${user.email}`;
-            if (!landing.classList.contains('hidden') && !appContainer.classList.contains('active')) {
-                enterApp();
-            }
+            if (!landing.classList.contains('hidden') && !appContainer.classList.contains('active')) enterApp();
         } else {
             userBadge.innerHTML = `<i class="fas fa-user"></i> Invitado (crear/editar, no eliminar)`;
         }
         applyFiltersAndRender();
     }
-    auth.onAuthStateChanged(user => { updateUIForUser(user); });
+    auth.onAuthStateChanged(user => updateUIForUser(user));
 
+    // Event listeners
     doLoginBtn.addEventListener("click", async () => {
-        const email = document.getElementById("loginEmail").value;
-        const pwd = document.getElementById("loginPassword").value;
-        try {
-            await auth.signInWithEmailAndPassword(email, pwd);
-            authModal.classList.remove("active");
-            authErrorSpan.innerText = "";
-            showToast("Sesión iniciada correctamente", "#0f2c59");
-        } catch(e) { authErrorSpan.innerText = "Error: " + e.message; }
+        const email = document.getElementById("loginEmail").value, pwd = document.getElementById("loginPassword").value;
+        try { await auth.signInWithEmailAndPassword(email, pwd); authModal.classList.remove("active"); authErrorSpan.innerText = ""; showToast("Sesión iniciada"); } catch(e) { authErrorSpan.innerText = "Error: "+e.message; }
     });
     doRegisterBtn.addEventListener("click", async () => {
-        const email = document.getElementById("regEmail").value;
-        const pwd = document.getElementById("regPassword").value;
-        if(pwd.length < 6) { authErrorSpan.innerText = "La contraseña debe tener al menos 6 caracteres."; return; }
-        try {
-            await auth.createUserWithEmailAndPassword(email, pwd);
-            authModal.classList.remove("active");
-            authErrorSpan.innerText = "";
-            showToast("Registro exitoso. ¡Bienvenido!", "#2e7d32");
-        } catch(e) { authErrorSpan.innerText = "Error: " + e.message; }
+        const email = document.getElementById("regEmail").value, pwd = document.getElementById("regPassword").value;
+        if(pwd.length < 6) { authErrorSpan.innerText = "Mínimo 6 caracteres."; return; }
+        try { await auth.createUserWithEmailAndPassword(email, pwd); authModal.classList.remove("active"); authErrorSpan.innerText = ""; showToast("Registro exitoso"); } catch(e) { authErrorSpan.innerText = "Error: "+e.message; }
     });
-    authTabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            authTabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-            const mode = tab.getAttribute("data-auth");
-            if(mode === "login") { loginFormDiv.style.display = "block"; registerFormDiv.style.display = "none"; }
-            else { loginFormDiv.style.display = "none"; registerFormDiv.style.display = "block"; }
-            authErrorSpan.innerText = "";
-        });
-    });
+    authTabs.forEach(tab => tab.addEventListener("click", () => {
+        authTabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const mode = tab.getAttribute("data-auth");
+        if(mode === "login") { loginFormDiv.style.display = "block"; registerFormDiv.style.display = "none"; }
+        else { loginFormDiv.style.display = "none"; registerFormDiv.style.display = "block"; }
+        authErrorSpan.innerText = "";
+    }));
 
     async function logoutAndGoToLanding() {
         await auth.signOut();
@@ -1157,27 +973,18 @@
         landing.classList.remove("hidden");
         allDocuments = []; filteredDocs = []; currentPage = 1;
         renderTableAndPagination();
-        showToast("Sesión cerrada. Regresando a inicio", "#c62828");
+        showToast("Sesión cerrada", "#c62828");
         logoutAlert.classList.remove("show");
     }
     confirmLogoutBtn.addEventListener("click", logoutAndGoToLanding);
     cancelLogoutBtn.addEventListener("click", () => logoutAlert.classList.remove("show"));
     btnLogout.addEventListener("click", () => logoutAlert.classList.add("show"));
-
-    btnImprimir.addEventListener("click", () => {
-        updatePrintDate();
-        window.print();
-    });
-
-    window.addEventListener("click", (e) => {
-        if (e.target === modalDoc) modalDoc.classList.remove("active");
-        if (e.target === authModal) authModal.classList.remove("active");
-    });
-
+    btnImprimir.addEventListener("click", () => { updatePrintDate(); window.print(); });
+    window.addEventListener("click", (e) => { if(e.target === modalDoc) modalDoc.classList.remove("active"); if(e.target === authModal) authModal.classList.remove("active"); });
     document.getElementById("btn-ingresar").addEventListener("click", enterApp);
     document.getElementById("btn-iniciar-sesion").addEventListener("click", () => { authErrorSpan.innerText = ""; authModal.classList.add("active"); });
-    closeAuthModal.addEventListener("click", () => authModal.classList.remove("active"));
-    closeAuthModalReg.addEventListener("click", () => authModal.classList.remove("active"));
+    document.getElementById("closeAuthModal").addEventListener("click", () => authModal.classList.remove("active"));
+    document.getElementById("closeAuthModalReg").addEventListener("click", () => authModal.classList.remove("active"));
     searchInput.addEventListener("input", (e) => { currentSearchText = e.target.value; applyFiltersAndRender(); });
     tipoBtns.forEach(btn => btn.addEventListener("click", () => { tipoBtns.forEach(b => b.classList.remove("active")); btn.classList.add("active"); currentTipo = btn.dataset.tipo; applyFiltersAndRender(); }));
     limpiarBtn.addEventListener("click", () => { selectedMaterias.clear(); renderMateriasChips(); applyFiltersAndRender(); });
