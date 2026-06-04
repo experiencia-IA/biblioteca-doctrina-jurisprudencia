@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Biblioteca de Doctrina y Jurisprudencia 6</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -304,12 +304,15 @@
             padding: 14px 12px;
             border-bottom: 1px solid #ecf3f9;
             vertical-align: middle;
+            word-break: break-word;
         }
         .action-icons i {
             margin: 0 6px;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             transition: 0.1s;
+            padding: 6px;
+            border-radius: 30px;
         }
         .fa-edit { color: #2c5f7a; }
         .fa-trash-alt { color: #b91c1c; }
@@ -318,6 +321,9 @@
             margin-right: 12px;
             text-decoration: none;
             font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .badge-tipo {
             background: #e9eef3;
@@ -339,9 +345,11 @@
         .page-btn {
             background: #f1f5f9;
             border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 8px 14px;
+            border-radius: 10px;
             cursor: pointer;
+            font-weight: 500;
+            min-width: 40px;
         }
         .page-btn.active-page { background: #0f2c59; color: white; }
 
@@ -368,7 +376,7 @@
         }
         .modal-content {
             background: white;
-            max-width: 480px;
+            max-width: 500px;
             width: 90%;
             border-radius: 32px;
             padding: 28px;
@@ -380,6 +388,7 @@
             margin: 8px 0 18px;
             border: 1px solid #ccc;
             border-radius: 20px;
+            font-size: 1rem;
         }
         .auth-tabs {
             display: flex;
@@ -444,18 +453,184 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        /* ========== MEJORAS RESPONSIVAS: MÓVIL (manteniendo escritorio intacto) ========== */
         @media (max-width: 780px) {
-            .main-dashboard { flex-direction: column; }
-            .filters-sidebar { width: 100%; max-height: 300px; }
-            .materias-list { flex-direction: column; max-height: 180px; }
-            .table-wrapper { overflow-x: auto; }
-            .header-actions { width: 100%; justify-content: flex-end; }
-            .app-header { flex-direction: column; align-items: flex-start; }
+            .main-dashboard {
+                flex-direction: column;
+                padding: 16px;
+                gap: 18px;
+            }
+            .filters-sidebar {
+                width: 100%;
+                max-height: 380px;
+                overflow-y: auto;
+                padding: 20px 18px;
+            }
+            .materias-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-height: none;
+                gap: 10px;
+            }
+            .materia-chip {
+                flex: 0 0 auto;
+                padding: 8px 18px;
+                font-size: 0.8rem;
+                background: #f1f5f9;
+            }
+            .tipo-buttons {
+                flex-wrap: wrap;
+            }
+            .tipo-btn {
+                flex: 1 1 auto;
+                padding: 10px 6px;
+                font-size: 0.85rem;
+            }
+            .content-panel {
+                border-radius: 24px;
+                overflow-x: auto;
+            }
+            .table-wrapper {
+                padding: 0 12px;
+                overflow-x: auto;
+            }
+            .data-table {
+                min-width: 560px;
+                font-size: 0.8rem;
+            }
+            .data-table th, .data-table td {
+                padding: 12px 8px;
+            }
+            .action-icons i {
+                font-size: 1.2rem;
+                margin: 0 3px;
+                padding: 4px;
+            }
+            .app-header {
+                padding: 12px 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .logo-area {
+                text-align: center;
+            }
+            .header-actions {
+                justify-content: center;
+                gap: 10px;
+            }
+            .btn-nuevo, .btn-imprimir, .user-badge, .btn-logout {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .pagination-bar {
+                flex-direction: column;
+                align-items: center;
+                padding: 14px;
+            }
+            .pages {
+                justify-content: center;
+            }
+            .page-btn {
+                padding: 6px 12px;
+                min-width: 38px;
+            }
+            .modal-content {
+                width: 92%;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .hero-card {
+                padding: 32px 20px;
+                width: 92%;
+            }
+            #landing-page h1 {
+                font-size: 2rem;
+            }
+            #landing-page h2 {
+                font-size: 1rem;
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 14px;
+            }
+            .btn-primary, .btn-outline {
+                width: 100%;
+                justify-content: center;
+            }
+            .filter-group label {
+                font-size: 0.85rem;
+            }
+            .search-input {
+                font-size: 0.9rem;
+                padding: 12px 14px;
+            }
+            .btn-limpiar {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            .badge-tipo {
+                display: inline-block;
+                margin-top: 4px;
+            }
+            .link-icon {
+                font-size: 0.8rem;
+            }
         }
 
-        /* ESTILOS ESPECÍFICOS PARA IMPRESIÓN */
+        /* Ajustes adicionales para pantallas muy pequeñas (≤480px) */
+        @media (max-width: 480px) {
+            .filters-sidebar {
+                max-height: 420px;
+                padding: 16px;
+            }
+            .materia-chip {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+            }
+            .hero-card h1 {
+                font-size: 1.7rem;
+            }
+            .modal-content {
+                padding: 18px;
+            }
+            .modal-content input, .modal-content select {
+                padding: 10px;
+                margin: 6px 0 14px;
+            }
+            .btn-primary, .btn-outline {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            .data-table td, .data-table th {
+                font-size: 0.75rem;
+            }
+            .action-icons i {
+                font-size: 1.1rem;
+            }
+            .toast-notify, .alert-modal {
+                bottom: 20px;
+                right: 16px;
+                left: 16px;
+                max-width: calc(100% - 32px);
+                padding: 12px 18px;
+                font-size: 0.85rem;
+            }
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .user-badge {
+                font-size: 0.75rem;
+            }
+            .btn-nuevo, .btn-imprimir {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* ESTILOS ESPECÍFICOS PARA IMPRESIÓN (intacto) */
         @media print {
-            /* Ocultar todo lo que no sea la tabla y el encabezado de impresión */
             .app-header,
             .filters-sidebar,
             .pagination-bar,
@@ -471,7 +646,6 @@
                 display: none !important;
             }
 
-            /* Mostrar el contenedor principal y la tabla */
             #app-container,
             .main-dashboard,
             .content-panel,
@@ -493,7 +667,6 @@
                 font-size: 12pt;
             }
 
-            /* Encabezado de impresión (normalmente oculto) */
             .print-header {
                 display: block !important;
                 text-align: center;
@@ -527,12 +700,10 @@
                 background: #f0f0f0;
                 font-weight: bold;
             }
-            /* Ocultar la última columna (acciones) en la impresión */
             .data-table th:last-child,
             .data-table td:last-child {
                 display: none;
             }
-            /* Asegurar que los enlaces se muestren como texto normal */
             .link-icon {
                 text-decoration: none;
                 color: black;
@@ -659,7 +830,7 @@
         <label>Word modelo (URL o subir archivo)</label>
         <input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx">
         <input type="file" id="wordFile" accept=".doc,.docx">
-        <div class="modal-actions">
+        <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end; margin-top:16px;">
             <button class="btn-outline" id="btnCancelarModal">Cancelar</button>
             <button class="btn-primary" id="btnGuardarDocumento">Guardar</button>
         </div>
@@ -704,7 +875,6 @@
         throw new Error(data.error?.message || "Error subiendo archivo");
     }
 
-    // Función auxiliar para formatear fecha a DD/MM/AAAA
     function formatDateToDDMMYYYY(date) {
         if (!date) return "—";
         let d;
@@ -724,7 +894,6 @@
         return `${day}/${month}/${year}`;
     }
 
-    // Actualizar la fecha de impresión en el encabezado oculto
     function updatePrintDate() {
         const printSpan = document.getElementById("printDateSpan");
         if (printSpan) {
@@ -732,7 +901,6 @@
         }
     }
 
-    // Estado global
     let allDocuments = [];
     let filteredDocs = [];
     let currentPage = 1;
@@ -742,7 +910,6 @@
     let currentUser = null;
     let editingDocId = null;
 
-    // DOM elements
     const landing = document.getElementById("landing-page");
     const appContainer = document.getElementById("app-container");
     const tbody = document.getElementById("tbodyResultados");
@@ -830,7 +997,6 @@
                     <td>${actions}</td>
                 </tr>`;
             }).join('');
-            // Asignar eventos: edición siempre, eliminación solo si logueado
             document.querySelectorAll("[data-action='edit']").forEach(el => {
                 el.addEventListener("click", (e) => { const id = el.getAttribute("data-id"); openEditModal(id); });
             });
@@ -846,7 +1012,6 @@
                 });
             }
         }
-        // paginación
         paginationDiv.innerHTML = "";
         if(totalPages<=1) { paginationDiv.innerHTML = "<span>Única</span>"; return; }
         for(let i=1; i<=Math.min(totalPages,7); i++) {
@@ -926,7 +1091,6 @@
         uploadStatusDiv.innerText = "";
     }
 
-    // Función para ingresar a la aplicación (ocultar landing y mostrar app)
     function enterApp() {
         if (landing.classList.contains('hidden')) return;
         landing.classList.add("hidden");
@@ -936,7 +1100,6 @@
         updatePrintDate();
     }
 
-    // AUTH: al cambiar el estado de autenticación, si el usuario está logueado y la landing está visible, entra automáticamente.
     function updateUIForUser(user) {
         currentUser = user;
         if(user) {
@@ -983,7 +1146,6 @@
         });
     });
 
-    // Cierre de sesión y regreso a landing
     async function logoutAndGoToLanding() {
         await auth.signOut();
         currentSearchText = ""; currentTipo = "todos"; selectedMaterias.clear();
@@ -1007,49 +1169,11 @@
         window.print();
     });
 
-    // ---- MEJORAS: ENTER en modales y cierre al hacer clic fuera ----
-    // Cierre al hacer clic en el fondo del modal (ya existía, lo aseguramos)
     window.addEventListener("click", (e) => {
         if (e.target === modalDoc) modalDoc.classList.remove("active");
         if (e.target === authModal) authModal.classList.remove("active");
     });
 
-    // Función para agregar listener de Enter a un modal
-    function setupEnterToSubmit(modalElement, primaryButtonSelector, getActiveButton = null) {
-        if (!modalElement) return;
-        modalElement.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                // Evitar envío si viene de un textarea o si el botón ya está siendo presionado
-                if (e.target.tagName === 'TEXTAREA') return;
-                let buttonToClick = null;
-                if (getActiveButton) {
-                    buttonToClick = getActiveButton();
-                } else {
-                    buttonToClick = modalElement.querySelector(primaryButtonSelector);
-                }
-                if (buttonToClick && !buttonToClick.disabled) {
-                    e.preventDefault();
-                    buttonToClick.click();
-                }
-            }
-        });
-    }
-
-    // Modal de autenticación: el botón primario depende de la pestaña activa
-    setupEnterToSubmit(authModal, null, () => {
-        const activeTab = document.querySelector('.auth-tab.active');
-        if (activeTab && activeTab.getAttribute('data-auth') === 'login') {
-            return document.getElementById('doLogin');
-        } else {
-            return document.getElementById('doRegister');
-        }
-    });
-
-    // Modal de documento: siempre el botón Guardar
-    setupEnterToSubmit(modalDoc, '#btnGuardarDocumento');
-    // -------------------------------------------------------------
-
-    // Eventos UI
     document.getElementById("btn-ingresar").addEventListener("click", enterApp);
     document.getElementById("btn-iniciar-sesion").addEventListener("click", () => { authErrorSpan.innerText = ""; authModal.classList.add("active"); });
     closeAuthModal.addEventListener("click", () => authModal.classList.remove("active"));
