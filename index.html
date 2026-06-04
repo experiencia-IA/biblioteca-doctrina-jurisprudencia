@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Biblioteca Jurídica | Vista Móvil Mejorada</title>
+    <title>Biblioteca Jurídica | Móvil con scroll y paginación</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase SDKs -->
@@ -25,7 +25,7 @@
             height: 100vh;
         }
 
-        /* LANDING PAGE */
+        /* LANDING PAGE (sin cambios) */
         #landing-page {
             position: fixed;
             top: 0;
@@ -115,6 +115,7 @@
             background: #0f2c59;
             color: white;
         }
+
         /* APP CONTAINER */
         #app-container {
             display: none;
@@ -125,6 +126,7 @@
         #app-container.active {
             display: flex;
         }
+
         /* HEADER */
         .app-header {
             background: white;
@@ -272,6 +274,7 @@
             width: 100%;
             cursor: pointer;
         }
+
         /* CONTENIDO: tabla (escritorio) y cards (móvil) */
         .content-panel {
             flex: 1;
@@ -354,17 +357,20 @@
         }
         .page-btn.active-page { background: #0f2c59; color: white; }
 
-        /* ========== VISTA MÓVIL: TARJETAS VERTICALES CON TODOS LOS DATOS ========== */
+        /* ========== VISTA MÓVIL: TARJETAS con scroll vertical y paginación visible ========== */
         @media (max-width: 780px) {
             .main-dashboard {
                 flex-direction: column;
                 padding: 12px;
                 gap: 16px;
+                overflow: hidden; /* para que el contenido respete el alto */
             }
             .filters-sidebar {
                 width: 100%;
-                max-height: 360px;
+                max-height: 320px;
+                overflow-y: auto;
                 padding: 16px;
+                flex-shrink: 0;
             }
             .materias-list {
                 flex-direction: row;
@@ -375,18 +381,26 @@
                 flex: 0 0 auto;
                 padding: 8px 18px;
             }
+            .content-panel {
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
             .table-wrapper {
+                flex: 1;
+                overflow-y: auto;   /* scroll vertical para las tarjetas */
                 padding: 0 12px;
-                overflow-x: visible;
+                -webkit-overflow-scrolling: touch;
             }
             /* Ocultamos la tabla clásica y mostramos contenedor de tarjetas */
             .data-table {
                 display: none;
             }
             .cards-container {
-                display: flex;
+                display: flex !important;
                 flex-direction: column;
                 gap: 20px;
+                padding-bottom: 16px;
             }
             .doc-card {
                 background: white;
@@ -394,7 +408,7 @@
                 border: 1px solid #e2edf2;
                 padding: 18px;
                 box-shadow: 0 6px 14px rgba(0,0,0,0.04);
-                transition: all 0.1s;
+                width: 100%;
             }
             .doc-card h4 {
                 font-size: 1.1rem;
@@ -443,9 +457,6 @@
                 flex: 1 0 auto;
                 justify-content: center;
             }
-            .doc-card .doc-link-btn i {
-                font-size: 1.2rem;
-            }
             .doc-card .doc-date {
                 font-size: 0.7rem;
                 color: #5a6e7c;
@@ -453,12 +464,12 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                flex-wrap: wrap;
             }
             .doc-card .card-actions {
                 display: flex;
                 gap: 20px;
                 justify-content: flex-end;
-                margin-top: 12px;
             }
             .doc-card .card-actions i {
                 font-size: 1.4rem;
@@ -467,6 +478,19 @@
                 border-radius: 50%;
                 cursor: pointer;
             }
+            /* Barra de paginación siempre visible abajo */
+            .pagination-bar {
+                flex-shrink: 0;
+                background: white;
+                border-top: 1px solid #e2edf2;
+                padding: 14px 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            .pages {
+                justify-content: center;
+            }
             .header-actions, .app-header {
                 flex-wrap: wrap;
                 justify-content: center;
@@ -474,10 +498,6 @@
             .btn-nuevo, .btn-imprimir, .user-badge, .btn-logout {
                 padding: 8px 14px;
                 font-size: 0.75rem;
-            }
-            .pagination-bar {
-                flex-direction: column;
-                align-items: center;
             }
         }
 
@@ -488,7 +508,7 @@
             }
         }
 
-        /* MODALES */
+        /* MODALES (sin cambios) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -589,7 +609,7 @@
             cursor: pointer;
         }
 
-        /* ESTILOS IMPRESIÓN (mantener tabla) */
+        /* ESTILOS IMPRESIÓN: título, fecha DD/MM/AAAA y sin columna acciones */
         @media print {
             .app-header, .filters-sidebar, .pagination-bar, .header-actions, .btn-nuevo, .btn-imprimir, .btn-logout, .user-badge, .modal-overlay, #landing-page, .toast-notify, .alert-modal {
                 display: none !important;
@@ -601,6 +621,25 @@
                 width: 100% !important;
                 margin: 0;
                 padding: 0;
+            }
+            .data-table th:last-child, .data-table td:last-child {
+                display: none;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #0f2c59;
+                padding-bottom: 10px;
+            }
+            .print-header h1 {
+                font-size: 18pt;
+                color: #0f2c59;
+                margin: 0;
+            }
+            .print-header p {
+                font-size: 11pt;
+                color: #2c4c7a;
             }
             .data-table th, .data-table td {
                 border: 1px solid #aaa;
@@ -688,7 +727,7 @@
 <div id="logoutAlert" class="alert-modal"><span><i class="fas fa-sign-out-alt"></i> ¿Cerrar sesión?</span><button id="confirmLogout">Sí, salir</button><button id="cancelLogout">Cancelar</button></div>
 
 <script>
-    // Configuración Firebase (misma que usaste)
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyDtbeCpZ6ydLo5IhElIIQUHYXV6D1GVHgo",
         authDomain: "biblioteca-doc-juris.firebaseapp.com",
@@ -773,6 +812,10 @@
 
     function renderCards(docs, isLogged) {
         if (!cardsContainer) return;
+        if (docs.length === 0) {
+            cardsContainer.innerHTML = `<div class="doc-card" style="text-align:center; color:#6c7a89;">📭 No hay documentos que coincidan con los filtros.<br>¡Usa el botón "Nuevo doc" para agregar!</div>`;
+            return;
+        }
         cardsContainer.innerHTML = docs.map(doc => {
             const fecha = doc.fechaRegistro ? formatDateToDDMMYYYY(doc.fechaRegistro) : "—";
             const tipoLabel = doc.tipo === 'doctrina' ? 'Doctrina' : 'Jurisprudencia';
