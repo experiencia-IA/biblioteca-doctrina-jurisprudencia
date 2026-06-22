@@ -242,12 +242,12 @@
             background: #0f2c59;
             color: white;
         }
+        /* === CAMBIO AQUÍ: LISTA DE MATERIAS SIN SCROLL === */
         .materias-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 280px;
-            overflow-y: auto;
+            /* se eliminó max-height y overflow-y */
         }
         .materia-chip {
             background: #f1f5f9;
@@ -357,15 +357,16 @@
         }
         .page-btn.active-page { background: #0f2c59; color: white; }
 
-        /* ========== VISTA MÓVIL: FILTROS COLAPSABLES SIN DESBORDES ========== */
+        /* ========== VISTA MÓVIL: FILTROS COLAPSABLES SIN SCROLL ========== */
         @media (max-width: 780px) {
             .main-dashboard {
                 flex-direction: column;
                 padding: 12px;
                 gap: 12px;
-                overflow: hidden;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100%;
             }
-            /* Botón flotante o dentro del flujo */
             .btn-filtros-movil {
                 background: #0f2c59;
                 color: white;
@@ -386,7 +387,6 @@
             .btn-filtros-movil:active {
                 transform: scale(0.97);
             }
-            /* Sidebar de filtros: oculto por defecto, se abre con clase open */
             .filters-sidebar {
                 width: 100%;
                 max-height: 0;
@@ -397,17 +397,15 @@
                 background: white;
                 border-radius: 28px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                /* Evitar desborde horizontal */
                 overflow-x: hidden;
                 box-sizing: border-box;
             }
             .filters-sidebar.open {
-                max-height: 700px; /* suficiente para todo el contenido */
+                max-height: none;
+                overflow: visible;
                 padding: 20px 16px;
                 margin-bottom: 16px;
-                overflow-y: auto;
             }
-            /* Asegurar que los elementos internos no se salgan */
             .filter-group {
                 width: 100%;
                 overflow-x: hidden;
@@ -415,6 +413,7 @@
             .search-input, .tipo-buttons, .materias-list, .btn-limpiar {
                 max-width: 100%;
             }
+            /* LISTA DE MATERIAS EN MÓVIL: wrap y sin scroll */
             .materias-list {
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -447,7 +446,6 @@
                 padding: 0 12px;
                 -webkit-overflow-scrolling: touch;
             }
-            /* Ocultamos la tabla clásica y mostramos tarjetas */
             .data-table {
                 display: none;
             }
@@ -779,7 +777,7 @@
 <!-- MODALES (autenticación y documento) -->
 <div id="authModal" class="modal-overlay"><div class="modal-content"><div class="auth-tabs"><button class="auth-tab active" data-auth="login">Iniciar Sesión</button><button class="auth-tab" data-auth="register">Registrarse</button></div><div id="loginForm"><input type="email" id="loginEmail" placeholder="Correo electrónico"><input type="password" id="loginPassword" placeholder="Contraseña"><div class="modal-actions"><button class="btn-outline" id="closeAuthModal">Cancelar</button><button class="btn-primary" id="doLogin">Acceder</button></div></div><div id="registerForm" style="display:none;"><input type="email" id="regEmail" placeholder="Correo electrónico"><input type="password" id="regPassword" placeholder="Contraseña (mínimo 6)"><div class="modal-actions"><button class="btn-outline" id="closeAuthModalReg">Cancelar</button><button class="btn-primary" id="doRegister">Registrarse</button></div></div><div id="authError" style="color:red; font-size:12px; margin-top:12px; text-align:center;"></div></div></div>
 
-<div id="modalDocumento" class="modal-overlay"><div class="modal-content"><h3 id="modalTitle"><i class="fas fa-upload"></i> Nuevo documento</h3><input type="text" id="docTitulo" placeholder="Título / Detalle del documento *"><select id="docTipo"><option value="doctrina">Doctrina</option><option value="jurisprudencia">Jurisprudencia</option></select><select id="docMateria"><option>Administrativo</option><option>Civil y Comercial</option><option>Laboral</option><option>Familia</option><option>Violencia Familiar</option><option>Fiscal y Tributario</option></select><label>Archivo PDF (subir a Cloudinary)</label><input type="file" id="pdfFile" accept=".pdf"><label>Word modelo (URL o subir archivo)</label><input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx"><input type="file" id="wordFile" accept=".doc,.docx"><div class="modal-actions"><button class="btn-outline" id="btnCancelarModal">Cancelar</button><button class="btn-primary" id="btnGuardarDocumento">Guardar</button></div><div id="uploadStatus" style="margin-top:12px; font-size:13px;"></div></div></div>
+<div id="modalDocumento" class="modal-overlay"><div class="modal-content"><h3 id="modalTitle"><i class="fas fa-upload"></i> Nuevo documento</h3><input type="text" id="docTitulo" placeholder="Título / Detalle del documento *"><select id="docTipo"><option value="doctrina">Doctrina</option><option value="jurisprudencia">Jurisprudencia</option></select><select id="docMateria"><option>Administrativo</option><option>Civil y Comercial</option><option>Laboral</option><option>Familia</option><option>Violencia Familiar</option><option>Fiscal y Tributario</option><option>Paz</option><option>Penal</option></select><label>Archivo PDF (subir a Cloudinary)</label><input type="file" id="pdfFile" accept=".pdf"><label>Word modelo (URL o subir archivo)</label><input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx"><input type="file" id="wordFile" accept=".doc,.docx"><div class="modal-actions"><button class="btn-outline" id="btnCancelarModal">Cancelar</button><button class="btn-primary" id="btnGuardarDocumento">Guardar</button></div><div id="uploadStatus" style="margin-top:12px; font-size:13px;"></div></div></div>
 
 <div id="successToast" class="toast-notify"><i class="fas fa-check-circle"></i> Operación exitosa</div>
 <div id="logoutAlert" class="alert-modal"><span><i class="fas fa-sign-out-alt"></i> ¿Cerrar sesión?</span><button id="confirmLogout">Sí, salir</button><button id="cancelLogout">Cancelar</button></div>
@@ -836,7 +834,7 @@
     const authModal = document.getElementById("authModal"), doLoginBtn = document.getElementById("doLogin"), doRegisterBtn = document.getElementById("doRegister"), authErrorSpan = document.getElementById("authError");
     const btnImprimir = document.getElementById("btnImprimirTabla"), successToast = document.getElementById("successToast"), logoutAlert = document.getElementById("logoutAlert"), confirmLogoutBtn = document.getElementById("confirmLogout"), cancelLogoutBtn = document.getElementById("cancelLogout");
     const authTabs = document.querySelectorAll(".auth-tab"), loginFormDiv = document.getElementById("loginForm"), registerFormDiv = document.getElementById("registerForm");
-    const materiasLista = ["Administrativo", "Civil y Comercial", "Laboral", "Familia", "Violencia Familiar", "Fiscal y Tributario"];
+    const materiasLista = ["Administrativo", "Civil y Comercial", "Laboral", "Familia", "Violencia Familiar", "Fiscal y Tributario", "Paz", "Penal"];
 
     // Lógica para colapsar filtros en móvil (sin desbordes)
     const toggleBtn = document.getElementById("toggleFiltersBtn");
