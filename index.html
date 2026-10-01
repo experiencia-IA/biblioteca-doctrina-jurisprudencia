@@ -32,88 +32,121 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(135deg, #f4f8fc 0%, #e9eef3 100%);
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             text-align: center;
             z-index: 1000;
+            overflow-y: auto;
+            padding: 24px 0;
             transition: opacity 0.4s ease, visibility 0.4s;
-            backdrop-filter: blur(2px);
         }
         #landing-page.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
-        .hero-card {
-            background: rgba(255,255,255,0.94);
-            border-radius: 32px;
-            padding: 48px 32px;
-            max-width: 700px;
+        #landing-page .hero-card {
+            margin: auto;
+            background: #ffffff;
+            border: 2px solid #0a2147;
+            border-radius: 6px;
+            padding: 64px 56px;
+            max-width: 640px;
             width: 90%;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2);
-            border: 1px solid rgba(176,141,87,0.3);
+            animation: heroIn 0.5s ease both;
+        }
+        @keyframes heroIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        #landing-page .hero-kicker {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #2f63ad;
+            margin-bottom: 20px;
         }
         #landing-page h1 {
-            font-family: 'Merriweather', serif;
-            color: #0f2c59;
-            font-size: 2.8rem;
+            font-family: 'Inter', sans-serif;
+            color: #0a2147;
+            font-size: 2.4rem;
+            line-height: 1.2;
             font-weight: 700;
-            letter-spacing: -0.3px;
-            border-bottom: 3px solid #b08d57;
-            display: inline-block;
-            padding-bottom: 12px;
-            margin-bottom: 24px;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+        #landing-page .hero-divider {
+            width: 40px;
+            height: 2px;
+            margin: 0 auto 20px;
+            background: #0a2147;
         }
         #landing-page h2 {
-            color: #2c4c7a;
-            font-size: 1.2rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-bottom: 40px;
+            font-family: 'Inter', sans-serif;
+            color: #4a6286;
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.6;
+            letter-spacing: 0.1px;
+            margin-bottom: 44px;
         }
-        .btn-group {
+        #landing-page .btn-group {
             display: flex;
-            gap: 20px;
+            gap: 14px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 0;
         }
-        .btn-primary {
-            background: #0f2c59;
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            font-size: 1.1rem;
+        #landing-page .btn-primary,
+        #landing-page .btn-outline {
+            font-family: 'Inter', sans-serif;
+            min-width: 180px;
+            padding: 13px 28px;
+            font-size: 0.92rem;
             font-weight: 600;
-            border-radius: 40px;
+            letter-spacing: 0.2px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            box-shadow: none;
+            transform: none;
         }
-        .btn-primary:hover {
-            background: #1e4585;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px -12px #0f2c59;
+        #landing-page .btn-primary {
+            background: #0a2147;
+            color: #ffffff;
+            border: 1.5px solid #0a2147;
         }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #0f2c59;
-            color: #0f2c59;
-            padding: 12px 30px;
-            font-weight: 600;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
+        #landing-page .btn-primary:hover {
+            background: #12397a;
+            border-color: #12397a;
+            transform: none;
+            box-shadow: none;
         }
-        .btn-outline:hover {
-            background: #0f2c59;
-            color: white;
+        #landing-page .btn-outline {
+            background: #ffffff;
+            color: #0a2147;
+            border: 1.5px solid #0a2147;
+        }
+        #landing-page .btn-outline:hover {
+            background: #0a2147;
+            color: #ffffff;
+        }
+        #landing-page .btn-primary:focus-visible,
+        #landing-page .btn-outline:focus-visible {
+            outline: 2px solid #2f63ad;
+            outline-offset: 3px;
+        }
+        @media (max-width: 560px) {
+            #landing-page .hero-card { padding: 44px 24px; }
+            #landing-page h1 { font-size: 1.7rem; }
+            #landing-page .btn-primary, #landing-page .btn-outline { width: 100%; }
         }
 
         /* APP CONTAINER */
@@ -612,8 +645,10 @@
         }
         .auth-tab.active {
             color: #0f2c59;
-            border-bottom: 2px solid #b08d57;
+            border-bottom: 2px solid #1f63b8;
         }
+        /* Registro oculto visualmente (el código sigue intacto) */
+        .auth-tab[data-auth="register"] { display: none; }
         .toast-notify {
             position: fixed;
             bottom: 30px;
@@ -703,11 +738,13 @@
 <!-- LANDING PAGE -->
 <div id="landing-page">
     <div class="hero-card">
+        <div class="hero-kicker">Ministerio Público</div>
         <h1>Biblioteca de Doctrina y Jurisprudencia</h1>
+        <div class="hero-divider"></div>
         <h2>Defensoría Civil y Comercial Nº 6 · Ministerio Público</h2>
         <div class="btn-group">
-            <button class="btn-primary" id="btn-ingresar"><i class="fas fa-book-open"></i> Ingresar ahora</button>
-            <button class="btn-outline" id="btn-iniciar-sesion"><i class="fas fa-key"></i> Iniciar Sesión</button>
+            <button class="btn-primary" id="btn-ingresar">Ingresar ahora</button>
+            <button class="btn-outline" id="btn-iniciar-sesion">Administrador</button>
         </div>
     </div>
 </div>
@@ -775,7 +812,7 @@
 </div>
 
 <!-- MODALES (autenticación y documento) -->
-<div id="authModal" class="modal-overlay"><div class="modal-content"><div class="auth-tabs"><button class="auth-tab active" data-auth="login">Iniciar Sesión</button><button class="auth-tab" data-auth="register">Registrarse</button></div><div id="loginForm"><input type="email" id="loginEmail" placeholder="Correo electrónico"><input type="password" id="loginPassword" placeholder="Contraseña"><div class="modal-actions"><button class="btn-outline" id="closeAuthModal">Cancelar</button><button class="btn-primary" id="doLogin">Acceder</button></div></div><div id="registerForm" style="display:none;"><input type="email" id="regEmail" placeholder="Correo electrónico"><input type="password" id="regPassword" placeholder="Contraseña (mínimo 6)"><div class="modal-actions"><button class="btn-outline" id="closeAuthModalReg">Cancelar</button><button class="btn-primary" id="doRegister">Registrarse</button></div></div><div id="authError" style="color:red; font-size:12px; margin-top:12px; text-align:center;"></div></div></div>
+<div id="authModal" class="modal-overlay"><div class="modal-content"><div class="auth-tabs"><button class="auth-tab active" data-auth="login">Administrador</button><button class="auth-tab" data-auth="register">Registrarse</button></div><div id="loginForm"><input type="email" id="loginEmail" placeholder="Correo electrónico"><input type="password" id="loginPassword" placeholder="Contraseña"><div class="modal-actions"><button class="btn-outline" id="closeAuthModal">Cancelar</button><button class="btn-primary" id="doLogin">Acceder</button></div></div><div id="registerForm" style="display:none;"><input type="email" id="regEmail" placeholder="Correo electrónico"><input type="password" id="regPassword" placeholder="Contraseña (mínimo 6)"><div class="modal-actions"><button class="btn-outline" id="closeAuthModalReg">Cancelar</button><button class="btn-primary" id="doRegister">Registrarse</button></div></div><div id="authError" style="color:red; font-size:12px; margin-top:12px; text-align:center;"></div></div></div>
 
 <div id="modalDocumento" class="modal-overlay"><div class="modal-content"><h3 id="modalTitle"><i class="fas fa-upload"></i> Nuevo documento</h3><input type="text" id="docTitulo" placeholder="Título / Detalle del documento *"><select id="docTipo"><option value="doctrina">Doctrina</option><option value="jurisprudencia">Jurisprudencia</option></select><select id="docMateria"><option>Administrativo</option><option>Civil y Comercial</option><option>Laboral</option><option>Familia</option><option>Violencia Familiar</option><option>Fiscal y Tributario</option><option>Paz</option><option>Penal</option></select><label>Archivo PDF (subir a Cloudinary)</label><input type="file" id="pdfFile" accept=".pdf"><label>Word modelo (URL o subir archivo)</label><input type="text" id="wordUrl" placeholder="https://ejemplo.com/modelo.docx"><input type="file" id="wordFile" accept=".doc,.docx"><div class="modal-actions"><button class="btn-outline" id="btnCancelarModal">Cancelar</button><button class="btn-primary" id="btnGuardarDocumento">Guardar</button></div><div id="uploadStatus" style="margin-top:12px; font-size:13px;"></div></div></div>
 
